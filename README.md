@@ -79,9 +79,11 @@ mcporter call MiniMax.understand_image prompt: "这张图片里有什么？" ima
 
 ### 3. 语音合成（TTS）
 
+> ⚠️ **注意**：语音合成需要使用 `sk-cp-` 开头的 Token Plan API Key，`sk-api-` 开头的 API Key 不支持语音合成。文案稍长一些效果更好。
+
 ```bash
 cd ~/.openclaw/workspace
-python3 scripts/tts.py tts "你好，欢迎使用 MiniMax 语音合成" -v female-shaonv -o output.mp3
+python3 scripts/tts.py tts "你好，欢迎使用 MiniMax 语音合成，建议文案稍长一些效果会更好" -v female-shaonv -o output.mp3
 ```
 
 **参数说明**：
