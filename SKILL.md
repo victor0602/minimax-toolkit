@@ -74,6 +74,17 @@ ffmpeg -i minimax-output/output.mp3 -c:a libopus minimax-output/output.opus -y
 python3 ~/.openclaw/workspace/send_feishu_audio.py minimax-output/output.opus
 ```
 
+### 常见问题排查
+
+**问题：API 调用成功但没有生成音频文件**
+- 检查是否返回 `No audio data returned from API` 错误
+- 检查 `extra_info` 中是否有 audio 字段
+- 确认 API Key 是否有 TTS 权限
+
+**问题：积分消耗但语音生成失败**
+- 可能是 API 限流或临时故障，重试可能成功
+- 检查网络连接是否稳定
+
 ---
 
 ## 4. 图片生成（image-01）
