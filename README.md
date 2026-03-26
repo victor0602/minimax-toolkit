@@ -184,7 +184,7 @@ minimax-toolkit/
 > 确保已在 shell 配置文件中正确设置 `MINIMAX_API_KEY`，并执行了 `source ~/.zshrc`。
 
 **Q: TTS 报 401 错误？**
-> API Key 无效或已过期，请到 [MiniMax 控制台](https://platform.minimaxi.com) 重新获取。
+> 可能使用了 `sk-api-` 开头的 API Key。请确认你使用的是 `sk-cp-` 开头的 Token Plan API Key，只有后者才支持语音合成。
 
 **Q: 图片生成返回 403？**
 > 部分图片 URL 需要认证或已过期，请使用公开可访问的图片链接。
