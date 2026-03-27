@@ -1,60 +1,71 @@
 # MiniMax Toolkit
 
-MiniMax 全功能工具包，支持语音合成、图片生成、图片理解和联网搜索。
+MiniMax 全功能工具包，支持语音合成、图片生成、图片理解、联网搜索、音乐生成和视频生成。
 
 ## 更新日志
 
-### v1.1.0 (2026-03-26)
+### v1.2.0 (2026-03-27)
 
-**TTS 脚本重写，优化稳定性：**
+**新增功能：**
+- 🎵 **音乐生成**：支持 `music-2.5` 模型，可生成纯音乐或带歌词的歌曲
+- 🎬 **视频生成**：支持 `MiniMax-Hailuo-2.3` 模型，文生视频 / 图生视频 / 首尾帧
 
-- 🔧 **新增直接 API 调用**：当 minimax-multimodal 脚本不可用时，自动 fallback 到直接调用 MiniMax TTS API
-- 🐛 **修复音频数据解析**：支持多种响应格式（`data.audio`、`extra_info.audio`、根级别 `audio`）
-- 📝 **新增 `--verbose` 模式**：显示详细调用信息，方便调试
-- ✨ **新增 `api` 子命令**：直接打印 API 返回的 JSON，便于排查问题
-- 💡 **更好的错误提示**：区分不同类型的错误（超时、网络、API 错误等）
+**代码优化：**
+- TTS 和图片生成脚本改为纯自包含，不依赖外部技能包
+- 所有脚本移除了硬编码路径，兼容 macOS / Linux / Windows
+- 新增 `.env.example` 模板文件，方便其他用户快速配置
+- 新增 `.gitignore` 避免误提交 `.env` 和输出文件
 
-**新增调试功能：**
-
-```bash
-# 查看详细日志
-python3 scripts/tts.py tts "测试" --verbose
-
-# 直接查看 API 返回
-python3 scripts/tts.py api "测试"
-```
+**文档完善：**
+- SKILL.md 新增完整的 mcporter 安装配置说明
+- 修正音乐 API Key 说明（sk-cp- 和 sk-api- 的正确用途）
 
 ---
 
-### v1.0.0 (2026-03-xx)
+### v1.1.0 (2026-03-26)
 
-初始版本，包含：
-- 语音合成 (TTS)
-- 图片生成 (image-01)
-- 图片理解 (understand_image)
-- 联网搜索 (web_search)
+- TTS 脚本重写，增加直接 API 调用 fallback
+- 修复音频数据解析（支持多种响应格式）
+- 新增 `--verbose` 模式和 `api` 子命令
+
+---
+
+## 关于本工具包
+
+MiniMax Toolkit 是面向 OpenClaw Agent 的 MiniMax 多模态能力集成工具，包含六大功能：
+
+| 功能 | 模型 | 说明 |
+|------|------|------|
+| 语音合成 | speech-2.8-hd | 支持多种音色和情绪调节 |
+| 图片生成 | image-01 | 文生图 / 图生图（角色一致性） |
+| 图片理解 | - | 通过 mcporter MCP 工具调用 |
+| 联网搜索 | - | 通过 mcporter MCP 工具调用 |
+| 音乐生成 | music-2.5 / music-2.5+ | 纯音乐或有词歌曲 |
+| 视频生成 | MiniMax-Hailuo-2.3 | 文生视频 / 图生视频 / 首尾帧 |
 
 ## 快速开始
 
-### 语音合成 (TTS)
+### 环境配置
+
+1. 复制环境变量模板：
+   ```bash
+   cp .env.example .env
+   # 编辑 .env，填入你的 MINIMAX_API_KEY
+   ```
+
+2. 如果需要图片理解或联网搜索，安装 mcporter：
+   ```bash
+   npm install -g @openwhatsapp/mcporter
+   # 然后在 ~/.mcporter/mcporter.json 中配置 MiniMax MCP 服务
+   ```
+
+### 语音合成
 
 ```bash
-# 基本用法
 python3 scripts/tts.py tts "你好，欢迎使用" -v female-shaonv -o output.mp3
-
-# 查看详细信息（调试用）
-python3 scripts/tts.py tts "测试语音" --verbose
-
-# 直接查看 API 返回的 JSON
-python3 scripts/tts.py api "测试文本"
 ```
 
-**可用语音 ID：**
-- `female-shaonv` - 少女音（默认）
-- `male-qn-qingse` - 青年男声
-- `male-qn-jingying` - 精英男声
-- `female-yujie` - 御姐音
-- `female-tianmei` - 甜美女声
+**可用音色：** `female-shaonv`（少女）、`male-qn-qingse`（青男）、`female-yujie`（御姐）等
 
 ### 图片生成
 
@@ -62,44 +73,39 @@ python3 scripts/tts.py api "测试文本"
 python3 scripts/image_generate.py "一张咖啡馆的照片" -o output.png
 ```
 
-## 常见问题
+### 音乐生成
 
-### Q: 语音生成失败怎么办？
+```bash
+# 纯音乐
+bash scripts/music/generate_music.sh --instrumental --prompt "ambient electronic" -o ambient.mp3 --download
 
-1. 检查 API Key 是否正确设置：
-   ```bash
-   echo $MINIMAX_API_KEY
-   ```
+# 带歌词
+bash scripts/music/generate_music.sh --lyrics "[verse]\nHello world" --prompt "upbeat pop" -o song.mp3 --download
+```
 
-2. 使用 `--verbose` 查看详细错误信息：
-   ```bash
-   python3 scripts/tts.py tts "测试" --verbose
-   ```
+### 视频生成
 
-3. 直接查看 API 返回：
-   ```bash
-   python3 scripts/tts.py api "测试"
-   ```
-
-### Q: 提示 "No audio data in response"？
-
-这表示 API 返回了成功状态，但响应中没有音频数据。可能原因：
-- API 积分不足
-- 文本包含不支持的字符
-- API 临时故障
-
-可以尝试：
-- 缩短文本长度
-- 等待片刻后重试
-- 使用 `api` 命令查看完整响应
+```bash
+bash scripts/video/generate_video.sh --mode t2v --prompt "A cat on a moonlit rooftop, [跟随] tracking shot" --duration 6 -o video.mp4
+```
 
 ## 文件结构
 
 ```
 minimax-toolkit/
-├── SKILL.md          # 技能说明文档
-├── README.md         # 本文件
+├── SKILL.md                # 技能说明文档（OpenClaw 用）
+├── README.md               # 本文件
+├── .env.example            # 环境变量模板
+├── .gitignore              # Git 忽略配置
 └── scripts/
-    ├── tts.py        # 语音合成脚本
-    └── image_generate.py  # 图片生成脚本
+    ├── tts.py             # 语音合成入口
+    ├── tts/generate_voice.sh
+    ├── image_generate.py   # 图片生成入口
+    ├── image/generate_image.sh
+    ├── music/generate_music.sh
+    └── video/
+        ├── generate_video.sh        # 视频生成
+        ├── generate_long_video.sh  # 长视频
+        ├── generate_template_video.sh
+        └── add_bgm.sh
 ```
