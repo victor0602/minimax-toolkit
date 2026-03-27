@@ -1,6 +1,63 @@
 # MiniMax Toolkit
 
-MiniMax 全功能工具包，支持语音合成、图片生成、图片理解、联网搜索、音乐生成和视频生成。
+**OpenClaw + 飞书专属的 MiniMax 多功能工具包**
+
+> 官方 minimax-multimodal-toolkit 的「OpenClaw 深度适配增强版」，专为飞书 + OpenClaw 工作流打造。
+
+---
+
+## 核心亮点
+
+**🤝 OpenClaw 深度适配**
+- SKILL.md 触发词专为 OpenClaw Agent 调度逻辑优化，接入零门槛
+- mcporter 集成图片理解 + 联网搜索，官方版没有这两个功能
+
+**📤 飞书原生支持**
+- 内置 `send_feishu_audio` / `send_feishu_image` / `send_feishu_native_video` 外挂脚本
+- 生成内容直发飞书，图片/音频/视频一键气泡推送，官方版完全没有
+
+**🛡️ 安全性更高**
+- 动态路径，无硬编码用户名
+- `.gitignore` 防误提交，`.env.example` 模板零配置上手
+- `load_env()` 只读取必要变量，不会有多余 secrets 泄露到脚本环境
+
+**🔄 容错机制**
+- `tts.py` 主路径失败自动 fallback 直接调 API，不用担心脚本缺失
+- 完整 error handling，区分超时 / 网络 / API 错误
+
+---
+
+## 功能对比
+
+| | 官方版 | minimax-toolkit |
+|---|---|---|
+| TTS / 声音克隆 / 声音设计 | ✅ | ✅ |
+| 图片生成（文生图 / 图生图） | ✅ | ✅ |
+| 视频生成（文生视频 / 图生视频 / 首尾帧） | ✅ | ✅ |
+| 音乐生成 | ✅ | ✅ |
+| 媒体处理（格式转换/拼接/裁剪） | ✅ | — |
+| 图片理解 + 联网搜索 | ❌ | ✅ via mcporter |
+| 飞书推送（图片/音频/视频气泡） | ❌ | ✅ |
+| `.env.example` 新手模板 | ❌ | ✅ |
+| OpenClaw 触发词优化 | ❌ | ✅ |
+| 安全性（动态路径 + 防泄露） | ⚠️ | ✅ |
+
+---
+
+## 安装方式
+
+```bash
+# 方式一：直接 git clone
+git clone https://github.com/victor0602/minimax-toolkit.git
+cd minimax-toolkit
+cp .env.example .env
+# 编辑 .env，填入你的 MINIMAX_API_KEY
+
+# 方式二：通过 ClawHub 安装
+clawhub install minimax-toolkit --workdir ~/.openclaw/workspace --dir skills
+```
+
+---
 
 ## 更新日志
 
