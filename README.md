@@ -61,6 +61,16 @@ clawhub install minimax-toolkit --workdir ~/.openclaw/workspace --dir skills
 
 ## 更新日志
 
+### v1.3.0 (2026-03-29)
+
+**问题修复：**
+- 🐛 **mcporter 安装脚本化**：新增 `install-mcporter.sh`，一键自动配置 MiniMax MCP 服务器
+- 解决用户手动配置 mcporter 时路径/API Key 错误的问题
+- SKILL.md 安装说明从手动步骤改为脚本调用，降低出错概率
+- 新增安装后验证，自动检测 mcporter 是否正常运行
+
+---
+
 ### v1.2.0 (2026-03-27)
 
 **新增功能：**
@@ -87,64 +97,77 @@ clawhub install minimax-toolkit --workdir ~/.openclaw/workspace --dir skills
 
 ---
 
-## 关于本工具包
-
-MiniMax Toolkit 是面向 OpenClaw Agent 的 MiniMax 多模态能力集成工具，包含六大功能：
-
-| 功能 | 模型 | 说明 |
-|------|------|------|
-| 语音合成 | speech-2.8-hd | 支持多种音色和情绪调节 |
-| 图片生成 | image-01 | 文生图 / 图生图（角色一致性） |
-| 图片理解 | - | 通过 mcporter MCP 工具调用 |
-| 联网搜索 | - | 通过 mcporter MCP 工具调用 |
-| 音乐生成 | music-2.5 / music-2.5+ | 纯音乐或有词歌曲 |
-| 视频生成 | MiniMax-Hailuo-2.3 | 文生视频 / 图生视频 / 首尾帧 |
-
 ## 快速开始
 
-### 环境配置
+### 第一步：mcporter（图片理解 + 联网搜索）
+
+运行一键安装脚本（会自动检测环境、配置 MiniMax MCP）：
+
+```bash
+bash ~/.openclaw/workspace/skills/minimax-toolkit/scripts/install-mcporter.sh
+```
+
+安装后重启 OpenClaw Gateway 使配置生效：
+
+```bash
+openclaw gateway restart
+```
+
+验证是否正常：
+
+```bash
+mcporter list
+```
+
+### 第二步：其他功能
 
 1. 复制环境变量模板：
    ```bash
    cp .env.example .env
-   # 编辑 .env，填入你的 MINIMAX_API_KEY
+   # 编辑 .env，填入你的 MINIMAX_API_KEY（sk-cp- 或 sk-api- 开头）
    ```
 
-2. 如果需要图片理解或联网搜索，安装 mcporter：
+2. 语音合成：
    ```bash
-   npm install -g @openwhatsapp/mcporter
-   # 然后在 ~/.mcporter/mcporter.json 中配置 MiniMax MCP 服务
+   python3 scripts/tts.py tts "你好，欢迎使用" -v female-shaonv -o output.mp3
    ```
+
+3. 图片生成：
+   ```bash
+   python3 scripts/image_generate.py "一张咖啡馆的照片" -o output.png
+   ```
+
+4. 音乐生成：
+   ```bash
+   # 纯音乐
+   bash scripts/music/generate_music.sh --instrumental --prompt "ambient electronic" -o ambient.mp3 --download
+   # 带歌词
+   bash scripts/music/generate_music.sh --lyrics "[verse]\nHello world" --prompt "upbeat pop" -o song.mp3 --download
+   ```
+
+5. 视频生成：
+   ```bash
+   bash scripts/video/generate_video.sh --mode t2v --prompt "A cat on a moonlit rooftop" --duration 6 -o video.mp4
+   ```
+
+## 工具调用示例
+
+### 图片理解
+```bash
+mcporter call MiniMax.understand_image prompt: "描述这张图片" image_source: "https://example.com/image.jpg"
+```
+
+### 联网搜索
+```bash
+mcporter call MiniMax.web_search query: "今天北京天气"
+```
 
 ### 语音合成
-
 ```bash
 python3 scripts/tts.py tts "你好，欢迎使用" -v female-shaonv -o output.mp3
 ```
 
 **可用音色：** `female-shaonv`（少女）、`male-qn-qingse`（青男）、`female-yujie`（御姐）等
-
-### 图片生成
-
-```bash
-python3 scripts/image_generate.py "一张咖啡馆的照片" -o output.png
-```
-
-### 音乐生成
-
-```bash
-# 纯音乐
-bash scripts/music/generate_music.sh --instrumental --prompt "ambient electronic" -o ambient.mp3 --download
-
-# 带歌词
-bash scripts/music/generate_music.sh --lyrics "[verse]\nHello world" --prompt "upbeat pop" -o song.mp3 --download
-```
-
-### 视频生成
-
-```bash
-bash scripts/video/generate_video.sh --mode t2v --prompt "A cat on a moonlit rooftop, [跟随] tracking shot" --duration 6 -o video.mp4
-```
 
 ## 文件结构
 
@@ -155,6 +178,7 @@ minimax-toolkit/
 ├── .env.example            # 环境变量模板
 ├── .gitignore              # Git 忽略配置
 └── scripts/
+    ├── install-mcporter.sh  # mcporter 一键安装脚本
     ├── tts.py             # 语音合成入口
     ├── tts/generate_voice.sh
     ├── image_generate.py   # 图片生成入口
