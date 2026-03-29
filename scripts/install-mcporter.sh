@@ -88,12 +88,18 @@ mkdir -p "$MCPORTER_CONFIG_DIR"
 # 合并现有配置（保留 miot 等其他 server）
 if [ -f "$MCPORTER_CONFIG_FILE" ]; then
     echo -e "${GREEN}✓ 发现现有配置，保留其他 MCP 服务器${NC}"
-    # 用 python 处理 JSON 合并，更安全
+    # 用 python 处理 JSON 合并，更安全（通过环境变量传参，避免特殊字符转义问题）
+    MCPORTER_CONFIG_FILE="$MCPORTER_CONFIG_FILE" \
+    MINIMAX_API_KEY="$MINIMAX_API_KEY" \
+    MINIMAX_PACKAGE="$MINIMAX_PACKAGE" \
     python3 -c "
 import json
 import os
 
-config_path = os.path.expanduser('${MCPORTER_CONFIG_FILE}')
+config_path = os.path.expanduser(os.environ['MCPORTER_CONFIG_FILE'])
+api_key = os.environ['MINIMAX_API_KEY']
+package = os.environ['MINIMAX_PACKAGE']
+
 with open(config_path, 'r') as f:
     config = json.load(f)
 
@@ -102,9 +108,9 @@ if 'mcpServers' not in config:
 
 config['mcpServers']['MiniMax'] = {
     'command': 'uvx',
-    'args': ['${MINIMAX_PACKAGE}', '-y'],
+    'args': [package, '-y'],
     'env': {
-        'MINIMAX_API_KEY': '${MINIMAX_API_KEY}',
+        'MINIMAX_API_KEY': api_key,
         'MINIMAX_API_HOST': 'https://api.minimaxi.com'
     }
 }
