@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 680" width="960" height="680">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 740" width="960" height="740">
   <defs>
     <!-- Soft flat colors -->
     <linearGradient id="g-blue" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#60A5FA"/><stop offset="100%" stop-color="#3B82F6"/></linearGradient>
@@ -25,196 +25,183 @@
   </defs>
 
   <!-- Background -->
-  <rect width="960" height="680" fill="url(#g-bg)" rx="0"/>
+  <rect width="960" height="740" fill="url(#g-bg)" rx="0"/>
 
   <!-- Title -->
-  <text x="480" y="46" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="22" font-weight="700" fill="#1E293B">MiniMax Toolkit · 系统架构</text>
-  <text x="480" y="68" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="12" fill="#64748B">OpenClaw Native · 多模态能力工具包</text>
+  <text x="480" y="106" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="22" font-weight="700" fill="#1E293B">MiniMax Toolkit · 系统架构</text>
+  <text x="480" y="128" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="12" fill="#64748B">OpenClaw Native · 多模态能力工具包</text>
+
+  <!-- ===== Entry: toolkit.py (below title) ===== -->
+  <rect x="360" y="76" width="240" height="55" rx="27" fill="url(#g-blue)" filter="url(#shadow)"/>
+  <text x="480" y="100" text-anchor="middle" font-family="system-ui,sans-serif" font-size="16" font-weight="700" fill="#fff">toolkit.py</text>
+  <text x="480" y="117" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="rgba(255,255,255,0.8)">Unified CLI 入口</text>
 
   <!-- ===== 5 Feature Modules (middle row) ===== -->
   <!-- TTS -->
-  <rect x="30" y="120" width="165" height="140" rx="20" fill="#fff" filter="url(#shadow)"/>
-  <rect x="30" y="120" width="165" height="140" rx="20" fill="url(#g-blue)" opacity="0.08"/>
-  <circle cx="80" cy="158" r="22" fill="url(#g-blue)"/>
-  <text x="80" y="164" text-anchor="middle" font-family="system-ui,sans-serif" font-size="18" fill="#fff">🎙</text>
-  <text x="112" y="155" font-family="system-ui,sans-serif" font-size="14" font-weight="700" fill="#1E293B">TTS</text>
-  <text x="112" y="170" font-family="system-ui,sans-serif" font-size="9.5" fill="#64748B">语音合成</text>
-  <text x="112" y="188" font-family="system-ui,sans-serif" font-size="9" fill="#94A3B8">speech-2.8-hd</text>
-  <text x="112" y="202" font-family="system-ui,sans-serif" font-size="9" fill="#94A3B8">female-shaonv</text>
-  <text x="112" y="216" font-family="system-ui,sans-serif" font-size="9" fill="#94A3B8">male-qn-qingse</text>
-  <text x="112" y="230" font-family="system-ui,sans-serif" font-size="9" fill="#94A3B8">female-yujie</text>
-  <text x="112" y="244" font-family="system-ui,sans-serif" font-size="8" fill="#CBD5E1">...</text>
+  <rect x="30" y="180" width="165" height="140" rx="20" fill="#fff" filter="url(#shadow)"/>
+  <rect x="30" y="180" width="165" height="140" rx="20" fill="url(#g-blue)" opacity="0.08"/>
+  <circle cx="80" cy="218" r="22" fill="url(#g-blue)"/>
+  <text x="80" y="224" text-anchor="middle" font-family="system-ui,sans-serif" font-size="18" fill="#fff">🎙</text>
+  <text x="112" y="215" font-family="system-ui,sans-serif" font-size="14" font-weight="700" fill="#1E293B">TTS</text>
+  <text x="112" y="230" font-family="system-ui,sans-serif" font-size="9.5" fill="#64748B">语音合成</text>
+  <text x="112" y="248" font-family="system-ui,sans-serif" font-size="9" fill="#94A3B8">speech-2.8-hd</text>
+  <text x="112" y="262" font-family="system-ui,sans-serif" font-size="9" fill="#94A3B8">female-shaonv</text>
+  <text x="112" y="276" font-family="system-ui,sans-serif" font-size="9" fill="#94A3B8">male-qn-qingse</text>
+  <text x="112" y="290" font-family="system-ui,sans-serif" font-size="9" fill="#94A3B8">female-yujie</text>
 
   <!-- Image -->
-  <rect x="215" y="120" width="165" height="140" rx="20" fill="#fff" filter="url(#shadow)"/>
-  <rect x="215" y="120" width="165" height="140" rx="20" fill="url(#g-orange)" opacity="0.08"/>
-  <circle cx="265" cy="158" r="22" fill="url(#g-orange)"/>
-  <text x="265" y="164" text-anchor="middle" font-family="system-ui,sans-serif" font-size="18" fill="#fff">🎨</text>
-  <text x="297" y="155" font-family="system-ui,sans-serif" font-size="14" font-weight="700" fill="#1E293B">Image</text>
-  <text x="297" y="170" font-family="system-ui,sans-serif" font-size="9.5" fill="#64748B">图片生成</text>
-  <text x="297" y="188" font-family="system-ui,sans-serif" font-size="9" fill="#94A3B8">image-01</text>
-  <text x="297" y="202" font-family="system-ui,sans-serif" font-size="9" fill="#94A3B8">文生图 / 图生图</text>
-  <text x="297" y="216" font-family="system-ui,sans-serif" font-size="9" fill="#94A3B8">16:9 / 1:1 / 9:16</text>
-  <text x="297" y="230" font-family="system-ui,sans-serif" font-size="9" fill="#94A3B8">URL + 下载</text>
+  <rect x="215" y="180" width="165" height="140" rx="20" fill="#fff" filter="url(#shadow)"/>
+  <rect x="215" y="180" width="165" height="140" rx="20" fill="url(#g-orange)" opacity="0.08"/>
+  <circle cx="265" cy="218" r="22" fill="url(#g-orange)"/>
+  <text x="265" y="224" text-anchor="middle" font-family="system-ui,sans-serif" font-size="18" fill="#fff">🎨</text>
+  <text x="297" y="215" font-family="system-ui,sans-serif" font-size="14" font-weight="700" fill="#1E293B">Image</text>
+  <text x="297" y="230" font-family="system-ui,sans-serif" font-size="9.5" fill="#64748B">图片生成</text>
+  <text x="297" y="248" font-family="system-ui,sans-serif" font-size="9" fill="#94A3B8">image-01</text>
+  <text x="297" y="262" font-family="system-ui,sans-serif" font-size="9" fill="#94A3B8">文生图 / 图生图</text>
+  <text x="297" y="276" font-family="system-ui,sans-serif" font-size="9" fill="#94A3B8">16:9 / 1:1 / 9:16</text>
 
   <!-- Video -->
-  <rect x="400" y="120" width="165" height="140" rx="20" fill="#fff" filter="url(#shadow)"/>
-  <rect x="400" y="120" width="165" height="140" rx="20" fill="url(#g-pink)" opacity="0.08"/>
-  <circle cx="450" cy="158" r="22" fill="url(#g-pink)"/>
-  <text x="450" y="164" text-anchor="middle" font-family="system-ui,sans-serif" font-size="18" fill="#fff">🎬</text>
-  <text x="482" y="155" font-family="system-ui,sans-serif" font-size="14" font-weight="700" fill="#1E293B">Video</text>
-  <text x="482" y="170" font-family="system-ui,sans-serif" font-size="9.5" fill="#64748B">视频生成</text>
-  <text x="482" y="188" font-family="system-ui,sans-serif" font-size="9" fill="#94A3B8">MiniMax-Hailuo-2.3</text>
-  <text x="482" y="202" font-family="system-ui,sans-serif" font-size="9" fill="#94A3B8">文生视频 / 图生视频</text>
-  <text x="482" y="216" font-family="system-ui,sans-serif" font-size="9" fill="#94A3B8">首尾帧控制</text>
-  <text x="482" y="230" font-family="system-ui,sans-serif" font-size="9" fill="#94A3B8">6-10 秒</text>
+  <rect x="400" y="180" width="165" height="140" rx="20" fill="#fff" filter="url(#shadow)"/>
+  <rect x="400" y="180" width="165" height="140" rx="20" fill="url(#g-pink)" opacity="0.08"/>
+  <circle cx="450" cy="218" r="22" fill="url(#g-pink)"/>
+  <text x="450" y="224" text-anchor="middle" font-family="system-ui,sans-serif" font-size="18" fill="#fff">🎬</text>
+  <text x="482" y="215" font-family="system-ui,sans-serif" font-size="14" font-weight="700" fill="#1E293B">Video</text>
+  <text x="482" y="230" font-family="system-ui,sans-serif" font-size="9.5" fill="#64748B">视频生成</text>
+  <text x="482" y="248" font-family="system-ui,sans-serif" font-size="9" fill="#94A3B8">MiniMax-Hailuo-2.3</text>
+  <text x="482" y="262" font-family="system-ui,sans-serif" font-size="9" fill="#94A3B8">文生视频 / 图生视频</text>
+  <text x="482" y="276" font-family="system-ui,sans-serif" font-size="9" fill="#94A3B8">首尾帧控制 · 6-10秒</text>
 
   <!-- Music -->
-  <rect x="585" y="120" width="165" height="140" rx="20" fill="#fff" filter="url(#shadow)"/>
-  <rect x="585" y="120" width="165" height="140" rx="20" fill="url(#g-purple)" opacity="0.08"/>
-  <circle cx="635" cy="158" r="22" fill="url(#g-purple)"/>
-  <text x="635" y="164" text-anchor="middle" font-family="system-ui,sans-serif" font-size="18" fill="#fff">🎵</text>
-  <text x="667" y="155" font-family="system-ui,sans-serif" font-size="14" font-weight="700" fill="#1E293B">Music</text>
-  <text x="667" y="170" font-family="system-ui,sans-serif" font-size="9.5" fill="#64748B">音乐生成</text>
-  <text x="667" y="188" font-family="system-ui,sans-serif" font-size="9" fill="#94A3B8">music-2.5</text>
-  <text x="667" y="202" font-family="system-ui,sans-serif" font-size="9" fill="#94A3B8">歌词 + 旋律</text>
-  <text x="667" y="216" font-family="system-ui,sans-serif" font-size="9" fill="#94A3B8">纯音乐模式</text>
-  <text x="667" y="230" font-family="system-ui,sans-serif" font-size="9" fill="#94A3B8">ffmpeg 后处理</text>
+  <rect x="585" y="180" width="165" height="140" rx="20" fill="#fff" filter="url(#shadow)"/>
+  <rect x="585" y="180" width="165" height="140" rx="20" fill="url(#g-purple)" opacity="0.08"/>
+  <circle cx="635" cy="218" r="22" fill="url(#g-purple)"/>
+  <text x="635" y="224" text-anchor="middle" font-family="system-ui,sans-serif" font-size="18" fill="#fff">🎵</text>
+  <text x="667" y="215" font-family="system-ui,sans-serif" font-size="14" font-weight="700" fill="#1E293B">Music</text>
+  <text x="667" y="230" font-family="system-ui,sans-serif" font-size="9.5" fill="#64748B">音乐生成</text>
+  <text x="667" y="248" font-family="system-ui,sans-serif" font-size="9" fill="#94A3B8">music-2.5</text>
+  <text x="667" y="262" font-family="system-ui,sans-serif" font-size="9" fill="#94A3B8">歌词 + 旋律</text>
+  <text x="667" y="276" font-family="system-ui,sans-serif" font-size="9" fill="#94A3B8">纯音乐模式 · ffmpeg后处理</text>
 
   <!-- Feishu -->
-  <rect x="770" y="120" width="165" height="140" rx="20" fill="#fff" filter="url(#shadow)"/>
-  <rect x="770" y="120" width="165" height="140" rx="20" fill="url(#g-teal)" opacity="0.08"/>
-  <circle cx="820" cy="158" r="22" fill="url(#g-teal)"/>
-  <text x="820" y="164" text-anchor="middle" font-family="system-ui,sans-serif" font-size="18" fill="#fff">📨</text>
-  <text x="852" y="155" font-family="system-ui,sans-serif" font-size="14" font-weight="700" fill="#1E293B">Feishu</text>
-  <text x="852" y="170" font-family="system-ui,sans-serif" font-size="9.5" fill="#64748B">飞书消息</text>
-  <text x="852" y="188" font-family="system-ui,sans-serif" font-size="9" fill="#94A3B8">图片气泡推送</text>
-  <text x="852" y="202" font-family="system-ui,sans-serif" font-size="9" fill="#94A3B8">音频气泡推送</text>
-  <text x="852" y="216" font-family="system-ui,sans-serif" font-size="9" fill="#94A3B8">视频气泡推送</text>
-  <text x="852" y="230" font-family="system-ui,sans-serif" font-size="9" fill="#94A3B8">原生文件发送</text>
-
-  <!-- ===== Entry: toolkit.py (top center) ===== -->
-  <rect x="360" y="16" width="240" height="55" rx="27" fill="url(#g-blue)" filter="url(#shadow)"/>
-  <text x="480" y="40" text-anchor="middle" font-family="system-ui,sans-serif" font-size="16" font-weight="700" fill="#fff">toolkit.py</text>
-  <text x="480" y="57" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="rgba(255,255,255,0.8)">统一 CLI 入口</text>
+  <rect x="770" y="180" width="165" height="140" rx="20" fill="#fff" filter="url(#shadow)"/>
+  <rect x="770" y="180" width="165" height="140" rx="20" fill="url(#g-teal)" opacity="0.08"/>
+  <circle cx="820" cy="218" r="22" fill="url(#g-teal)"/>
+  <text x="820" y="224" text-anchor="middle" font-family="system-ui,sans-serif" font-size="18" fill="#fff">📨</text>
+  <text x="852" y="215" font-family="system-ui,sans-serif" font-size="14" font-weight="700" fill="#1E293B">Feishu</text>
+  <text x="852" y="230" font-family="system-ui,sans-serif" font-size="9.5" fill="#64748B">飞书消息</text>
+  <text x="852" y="248" font-family="system-ui,sans-serif" font-size="9" fill="#94A3B8">图片/音频/视频气泡</text>
+  <text x="852" y="262" font-family="system-ui,sans-serif" font-size="9" fill="#94A3B8">群聊管理 list/send</text>
+  <text x="852" y="276" font-family="system-ui,sans-serif" font-size="9" fill="#94A3B8">原生文件发送</text>
 
   <!-- Arrows: toolkit.py -> 5 modules -->
-  <path d="M 410 71 L 112 71 L 112 120" stroke="#94A3B8" stroke-width="2" fill="none" marker-end="url(#arr)"/>
-  <path d="M 445 71 L 297 71 L 297 120" stroke="#94A3B8" stroke-width="2" fill="none" marker-end="url(#arr)"/>
-  <path d="M 480 71 L 482 71 L 482 120" stroke="#94A3B8" stroke-width="2" fill="none" marker-end="url(#arr)"/>
-  <path d="M 515 71 L 667 71 L 667 120" stroke="#94A3B8" stroke-width="2" fill="none" marker-end="url(#arr)"/>
-  <path d="M 550 71 L 852 71 L 852 120" stroke="#94A3B8" stroke-width="2" fill="none" marker-end="url(#arr)"/>
+  <path d="M 410 131 L 112 131 L 112 180" stroke="#94A3B8" stroke-width="2" fill="none" marker-end="url(#arr)"/>
+  <path d="M 445 131 L 297 131 L 297 180" stroke="#94A3B8" stroke-width="2" fill="none" marker-end="url(#arr)"/>
+  <path d="M 480 131 L 482 131 L 482 180" stroke="#94A3B8" stroke-width="2" fill="none" marker-end="url(#arr)"/>
+  <path d="M 515 131 L 667 131 L 667 180" stroke="#94A3B8" stroke-width="2" fill="none" marker-end="url(#arr)"/>
+  <path d="M 550 131 L 852 131 L 852 180" stroke="#94A3B8" stroke-width="2" fill="none" marker-end="url(#arr)"/>
 
-  <!-- ===== Infrastructure Layer (bottom row) ===== -->
-  <text x="480" y="298" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#94A3B8" letter-spacing="3">— 基础设施 —</text>
+  <!-- ===== Infrastructure Layer ===== -->
+  <text x="480" y="358" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#94A3B8" letter-spacing="3">— 基础设施 —</text>
 
   <!-- CLI Commands -->
-  <rect x="30" y="318" width="205" height="85" rx="16" fill="#fff" filter="url(#shadow-sm)"/>
-  <rect x="30" y="318" width="205" height="85" rx="16" fill="url(#g-green)" opacity="0.06"/>
-  <circle cx="68" cy="352" r="18" fill="url(#g-green)"/>
-  <text x="68" y="358" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" fill="#fff">⚙</text>
-  <text x="95" y="345" font-family="system-ui,sans-serif" font-size="12" font-weight="600" fill="#1E293B">CLI 命令</text>
-  <text x="95" y="360" font-family="system-ui,sans-serif" font-size="9" fill="#64748B">setup · check · doctor</text>
-  <text x="95" y="375" font-family="system-ui,sans-serif" font-size="9" fill="#64748B">env · feishu list/send</text>
-  <text x="95" y="390" font-family="system-ui,sans-serif" font-size="8.5" fill="#CBD5E1">tts · image · music · video</text>
+  <rect x="30" y="378" width="205" height="85" rx="16" fill="#fff" filter="url(#shadow-sm)"/>
+  <rect x="30" y="378" width="205" height="85" rx="16" fill="url(#g-green)" opacity="0.06"/>
+  <circle cx="68" cy="412" r="18" fill="url(#g-green)"/>
+  <text x="68" y="418" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" fill="#fff">⚙</text>
+  <text x="95" y="405" font-family="system-ui,sans-serif" font-size="12" font-weight="600" fill="#1E293B">CLI 命令</text>
+  <text x="95" y="420" font-family="system-ui,sans-serif" font-size="9" fill="#64748B">setup · check · doctor</text>
+  <text x="95" y="435" font-family="system-ui,sans-serif" font-size="9" fill="#64748B">env · feishu list/send</text>
+  <text x="95" y="450" font-family="system-ui,sans-serif" font-size="8.5" fill="#CBD5E1">tts · image · music · video</text>
 
   <!-- Scripts -->
-  <rect x="255" y="318" width="205" height="85" rx="16" fill="#fff" filter="url(#shadow-sm)"/>
-  <rect x="255" y="318" width="205" height="85" rx="16" fill="url(#g-orange)" opacity="0.06"/>
-  <circle cx="293" cy="352" r="18" fill="url(#g-orange)"/>
-  <text x="293" y="358" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" fill="#fff">📜</text>
-  <text x="320" y="345" font-family="system-ui,sans-serif" font-size="12" font-weight="600" fill="#1E293B">生成脚本</text>
-  <text x="320" y="360" font-family="system-ui,sans-serif" font-size="9" fill="#64748B">tts.py / image_generate.py</text>
-  <text x="320" y="375" font-family="system-ui,sans-serif" font-size="9" fill="#64748B">generate_*.sh</text>
-  <text x="320" y="390" font-family="system-ui,sans-serif" font-size="8.5" fill="#CBD5E1">lib/common.sh · lib/diagnose.sh</text>
+  <rect x="255" y="378" width="205" height="85" rx="16" fill="#fff" filter="url(#shadow-sm)"/>
+  <rect x="255" y="378" width="205" height="85" rx="16" fill="url(#g-orange)" opacity="0.06"/>
+  <circle cx="293" cy="412" r="18" fill="url(#g-orange)"/>
+  <text x="293" y="418" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" fill="#fff">📜</text>
+  <text x="320" y="405" font-family="system-ui,sans-serif" font-size="12" font-weight="600" fill="#1E293B">生成脚本</text>
+  <text x="320" y="420" font-family="system-ui,sans-serif" font-size="9" fill="#64748B">tts.py / image_generate.py</text>
+  <text x="320" y="435" font-family="system-ui,sans-serif" font-size="9" fill="#64748B">generate_*.sh</text>
+  <text x="320" y="450" font-family="system-ui,sans-serif" font-size="8.5" fill="#CBD5E1">lib/common.sh · lib/diagnose.sh</text>
 
   <!-- MCP -->
-  <rect x="480" y="318" width="205" height="85" rx="16" fill="#fff" filter="url(#shadow-sm)"/>
-  <rect x="480" y="318" width="205" height="85" rx="16" fill="url(#g-purple)" opacity="0.06"/>
-  <circle cx="518" cy="352" r="18" fill="url(#g-purple)"/>
-  <text x="518" y="358" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" fill="#fff">🔌</text>
-  <text x="545" y="345" font-family="system-ui,sans-serif" font-size="12" font-weight="600" fill="#1E293B">mcporter MCP</text>
-  <text x="545" y="360" font-family="system-ui,sans-serif" font-size="9" fill="#64748B">MiniMax.web_search</text>
-  <text x="545" y="375" font-family="system-ui,sans-serif" font-size="9" fill="#64748B">MiniMax.understand_image</text>
-  <text x="545" y="390" font-family="system-ui,sans-serif" font-size="8.5" fill="#CBD5E1">图片理解 · 联网搜索</text>
+  <rect x="480" y="378" width="205" height="85" rx="16" fill="#fff" filter="url(#shadow-sm)"/>
+  <rect x="480" y="378" width="205" height="85" rx="16" fill="url(#g-purple)" opacity="0.06"/>
+  <circle cx="518" cy="412" r="18" fill="url(#g-purple)"/>
+  <text x="518" y="418" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" fill="#fff">🔌</text>
+  <text x="545" y="405" font-family="system-ui,sans-serif" font-size="12" font-weight="600" fill="#1E293B">mcporter MCP</text>
+  <text x="545" y="420" font-family="system-ui,sans-serif" font-size="9" fill="#64748B">MiniMax.web_search</text>
+  <text x="545" y="435" font-family="system-ui,sans-serif" font-size="9" fill="#64748B">MiniMax.understand_image</text>
+  <text x="545" y="450" font-family="system-ui,sans-serif" font-size="8.5" fill="#CBD5E1">图片理解 · 联网搜索</text>
 
   <!-- Config -->
-  <rect x="705" y="318" width="230" height="85" rx="16" fill="#fff" filter="url(#shadow-sm)"/>
-  <rect x="705" y="318" width="230" height="85" rx="16" fill="url(#g-dark)" opacity="0.06"/>
-  <circle cx="743" cy="352" r="18" fill="url(#g-dark)"/>
-  <text x="743" y="358" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" fill="#fff">🔐</text>
-  <text x="770" y="345" font-family="system-ui,sans-serif" font-size="12" font-weight="600" fill="#1E293B">配置与输出</text>
-  <text x="770" y="360" font-family="system-ui,sans-serif" font-size="9" fill="#64748B">.env / mcporter.json</text>
-  <text x="770" y="375" font-family="system-ui,sans-serif" font-size="9" fill="#64748B">minimax-output/</text>
-  <text x="770" y="390" font-family="system-ui,sans-serif" font-size="8.5" fill="#CBD5E1">动态路径 · 无硬编码</text>
+  <rect x="705" y="378" width="230" height="85" rx="16" fill="#fff" filter="url(#shadow-sm)"/>
+  <rect x="705" y="378" width="230" height="85" rx="16" fill="url(#g-dark)" opacity="0.06"/>
+  <circle cx="743" cy="412" r="18" fill="url(#g-dark)"/>
+  <text x="743" y="418" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" fill="#fff">🔐</text>
+  <text x="770" y="405" font-family="system-ui,sans-serif" font-size="12" font-weight="600" fill="#1E293B">配置与输出</text>
+  <text x="770" y="420" font-family="system-ui,sans-serif" font-size="9" fill="#64748B">.env / mcporter.json</text>
+  <text x="770" y="435" font-family="system-ui,sans-serif" font-size="9" fill="#64748B">minimax-output/</text>
+  <text x="770" y="450" font-family="system-ui,sans-serif" font-size="8.5" fill="#CBD5E1">动态路径 · 无硬编码</text>
 
   <!-- Arrows: modules -> infrastructure -->
-  <path d="M 112 260 L 112 295 L 132 295 L 132 318" stroke="#CBD5E1" stroke-width="1.5" fill="none" marker-end="url(#arr-dark)" stroke-dasharray="4,3"/>
-  <path d="M 297 260 L 297 295 L 357 295 L 357 318" stroke="#CBD5E1" stroke-width="1.5" fill="none" marker-end="url(#arr-dark)" stroke-dasharray="4,3"/>
-  <path d="M 482 260 L 482 295 L 582 295 L 582 318" stroke="#CBD5E1" stroke-width="1.5" fill="none" marker-end="url(#arr-dark)" stroke-dasharray="4,3"/>
-  <path d="M 667 260 L 667 295 L 807 295 L 807 318" stroke="#CBD5E1" stroke-width="1.5" fill="none" marker-end="url(#arr-dark)" stroke-dasharray="4,3"/>
-  <path d="M 852 260 L 852 295 L 820 295 L 820 318" stroke="#CBD5E1" stroke-width="1.5" fill="none" marker-end="url(#arr-dark)" stroke-dasharray="4,3"/>
+  <path d="M 112 320 L 112 355 L 132 355 L 132 378" stroke="#CBD5E1" stroke-width="1.5" fill="none" marker-end="url(#arr-dark)" stroke-dasharray="4,3"/>
+  <path d="M 297 320 L 297 355 L 357 355 L 357 378" stroke="#CBD5E1" stroke-width="1.5" fill="none" marker-end="url(#arr-dark)" stroke-dasharray="4,3"/>
+  <path d="M 482 320 L 482 355 L 582 355 L 582 378" stroke="#CBD5E1" stroke-width="1.5" fill="none" marker-end="url(#arr-dark)" stroke-dasharray="4,3"/>
+  <path d="M 667 320 L 667 355 L 807 355 L 807 378" stroke="#CBD5E1" stroke-width="1.5" fill="none" marker-end="url(#arr-dark)" stroke-dasharray="4,3"/>
+  <path d="M 852 320 L 852 355 L 820 355 L 820 378" stroke="#CBD5E1" stroke-width="1.5" fill="none" marker-end="url(#arr-dark)" stroke-dasharray="4,3"/>
 
-  <!-- ===== API Layer (bottom) ===== -->
-  <text x="480" y="438" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#94A3B8" letter-spacing="3">— API 服务 —</text>
+  <!-- ===== API Layer ===== -->
+  <text x="480" y="498" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#94A3B8" letter-spacing="3">— API 服务 —</text>
 
   <!-- MiniMax API -->
-  <rect x="60" y="450" width="260" height="100" rx="18" fill="url(#g-blue)" filter="url(#shadow)"/>
-  <text x="190" y="482" text-anchor="middle" font-family="system-ui,sans-serif" font-size="15" font-weight="700" fill="#fff">MiniMax API</text>
-  <text x="190" y="502" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="rgba(255,255,255,0.85)">api.minimaxi.com</text>
-  <text x="190" y="522" text-anchor="middle" font-family="system-ui,sans-serif" font-size="9" fill="rgba(255,255,255,0.7)">TTS · Image · Music · Video</text>
+  <rect x="60" y="510" width="260" height="100" rx="18" fill="url(#g-blue)" filter="url(#shadow)"/>
+  <text x="190" y="542" text-anchor="middle" font-family="system-ui,sans-serif" font-size="15" font-weight="700" fill="#fff">MiniMax API</text>
+  <text x="190" y="562" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="rgba(255,255,255,0.85)">api.minimaxi.com</text>
+  <text x="190" y="582" text-anchor="middle" font-family="system-ui,sans-serif" font-size="9" fill="rgba(255,255,255,0.7)">TTS · Image · Music · Video</text>
 
   <!-- Feishu API -->
-  <rect x="350" y="450" width="260" height="100" rx="18" fill="url(#g-teal)" filter="url(#shadow)"/>
-  <text x="480" y="482" text-anchor="middle" font-family="system-ui,sans-serif" font-size="15" font-weight="700" fill="#fff">Feishu API</text>
-  <text x="480" y="502" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="rgba(255,255,255,0.85)">open.feishu.cn</text>
-  <text x="480" y="522" text-anchor="middle" font-family="system-ui,sans-serif" font-size="9" fill="rgba(255,255,255,0.7)">im/v1/messages · im/v1/chats</text>
+  <rect x="350" y="510" width="260" height="100" rx="18" fill="url(#g-teal)" filter="url(#shadow)"/>
+  <text x="480" y="542" text-anchor="middle" font-family="system-ui,sans-serif" font-size="15" font-weight="700" fill="#fff">Feishu API</text>
+  <text x="480" y="562" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="rgba(255,255,255,0.85)">open.feishu.cn</text>
+  <text x="480" y="582" text-anchor="middle" font-family="system-ui,sans-serif" font-size="9" fill="rgba(255,255,255,0.7)">im/v1/messages · im/v1/chats</text>
 
   <!-- mcporter MCP Server -->
-  <rect x="640" y="450" width="260" height="100" rx="18" fill="url(#g-purple)" filter="url(#shadow)"/>
-  <text x="770" y="482" text-anchor="middle" font-family="system-ui,sans-serif" font-size="15" font-weight="700" fill="#fff">mcporter</text>
-  <text x="770" y="502" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="rgba(255,255,255,0.85)">minimax-coding-plan-mcp</text>
-  <text x="770" y="522" text-anchor="middle" font-family="system-ui,sans-serif" font-size="9" fill="rgba(255,255,255,0.7)">uvx · MCP Protocol</text>
+  <rect x="640" y="510" width="260" height="100" rx="18" fill="url(#g-purple)" filter="url(#shadow)"/>
+  <text x="770" y="542" text-anchor="middle" font-family="system-ui,sans-serif" font-size="15" font-weight="700" fill="#fff">mcporter</text>
+  <text x="770" y="562" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="rgba(255,255,255,0.85)">minimax-coding-plan-mcp</text>
+  <text x="770" y="582" text-anchor="middle" font-family="system-ui,sans-serif" font-size="9" fill="rgba(255,255,255,0.7)">uvx · MCP Protocol</text>
 
   <!-- Arrows: infrastructure -> APIs -->
-  <path d="M 132 403 L 132 430 L 190 430 L 190 450" stroke="#94A3B8" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <path d="M 357 403 L 357 430 L 480 430 L 480 450" stroke="#94A3B8" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <path d="M 582 403 L 582 430 L 770 430 L 770 450" stroke="#94A3B8" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <path d="M 807 403 L 807 430 L 820 430 L 820 450" stroke="#94A3B8" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <path d="M 132 463 L 132 490 L 190 490 L 190 510" stroke="#94A3B8" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <path d="M 357 463 L 357 490 L 480 490 L 480 510" stroke="#94A3B8" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <path d="M 582 463 L 582 490 L 770 490 L 770 510" stroke="#94A3B8" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <path d="M 807 463 L 807 490 L 820 490 L 820 510" stroke="#94A3B8" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
 
-  <!-- ===== LEGEND (bottom strip) ===== -->
-  <rect x="30" y="575" width="900" height="50" rx="14" fill="#fff" filter="url(#shadow-sm)"/>
-  <rect x="30" y="575" width="900" height="50" rx="14" fill="#F1F5F9" opacity="0.5"/>
+  <!-- ===== LEGEND ===== -->
+  <rect x="30" y="635" width="900" height="50" rx="14" fill="#fff" filter="url(#shadow-sm)"/>
+  <rect x="30" y="635" width="900" height="50" rx="14" fill="#F1F5F9" opacity="0.5"/>
 
-  <!-- TTS -->
-  <rect x="55" y="588" width="10" height="10" rx="3" fill="url(#g-blue)"/>
-  <text x="72" y="597" font-family="system-ui,sans-serif" font-size="10" fill="#475569">TTS 语音合成</text>
+  <rect x="55" y="648" width="10" height="10" rx="3" fill="url(#g-blue)"/>
+  <text x="72" y="657" font-family="system-ui,sans-serif" font-size="10" fill="#475569">TTS 语音合成</text>
 
-  <!-- Image -->
-  <rect x="175" y="588" width="10" height="10" rx="3" fill="url(#g-orange)"/>
-  <text x="192" y="597" font-family="system-ui,sans-serif" font-size="10" fill="#475569">Image 图片生成</text>
+  <rect x="175" y="648" width="10" height="10" rx="3" fill="url(#g-orange)"/>
+  <text x="192" y="657" font-family="system-ui,sans-serif" font-size="10" fill="#475569">Image 图片生成</text>
 
-  <!-- Video -->
-  <rect x="305" y="588" width="10" height="10" rx="3" fill="url(#g-pink)"/>
-  <text x="322" y="597" font-family="system-ui,sans-serif" font-size="10" fill="#475569">Video 视频生成</text>
+  <rect x="305" y="648" width="10" height="10" rx="3" fill="url(#g-pink)"/>
+  <text x="322" y="657" font-family="system-ui,sans-serif" font-size="10" fill="#475569">Video 视频生成</text>
 
-  <!-- Music -->
-  <rect x="425" y="588" width="10" height="10" rx="3" fill="url(#g-purple)"/>
-  <text x="442" y="597" font-family="system-ui,sans-serif" font-size="10" fill="#475569">Music 音乐生成</text>
+  <rect x="425" y="648" width="10" height="10" rx="3" fill="url(#g-purple)"/>
+  <text x="442" y="657" font-family="system-ui,sans-serif" font-size="10" fill="#475569">Music 音乐生成</text>
 
-  <!-- Feishu -->
-  <rect x="545" y="588" width="10" height="10" rx="3" fill="url(#g-teal)"/>
-  <text x="562" y="597" font-family="system-ui,sans-serif" font-size="10" fill="#475569">Feishu 飞书推送</text>
+  <rect x="545" y="648" width="10" height="10" rx="3" fill="url(#g-teal)"/>
+  <text x="562" y="657" font-family="system-ui,sans-serif" font-size="10" fill="#475569">Feishu 飞书推送</text>
 
-  <!-- CLI -->
-  <rect x="665" y="588" width="10" height="10" rx="3" fill="url(#g-green)"/>
-  <text x="682" y="597" font-family="system-ui,sans-serif" font-size="10" fill="#475569">CLI 命令</text>
+  <rect x="665" y="648" width="10" height="10" rx="3" fill="url(#g-green)"/>
+  <text x="682" y="657" font-family="system-ui,sans-serif" font-size="10" fill="#475569">CLI 命令</text>
 
-  <!-- API -->
-  <rect x="755" y="588" width="10" height="10" rx="3" fill="url(#g-blue)"/>
-  <text x="772" y="597" font-family="system-ui,sans-serif" font-size="10" fill="#475569">API 服务</text>
+  <rect x="755" y="648" width="10" height="10" rx="3" fill="url(#g-blue)"/>
+  <text x="772" y="657" font-family="system-ui,sans-serif" font-size="10" fill="#475569">API 服务</text>
 
-  <!-- Arrow -->
-  <line x1="855" y1="593" x2="890" y2="593" stroke="#94A3B8" stroke-width="1.5" marker-end="url(#arr)"/>
-  <text x="898" y="597" font-family="system-ui,sans-serif" font-size="10" fill="#475569">数据流</text>
+  <line x1="855" y1="653" x2="890" y2="653" stroke="#94A3B8" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="898" y="657" font-family="system-ui,sans-serif" font-size="10" fill="#475569">数据流</text>
 </svg>
