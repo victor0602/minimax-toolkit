@@ -2,6 +2,9 @@
 
 **OpenClaw 原生 · 多模态能力工具包**
 
+[![GitHub stars](https://img.shields.io/github/stars/victor0602/minimax-toolkit)](https://github.com/victor0602/minimax-toolkit)
+[![License MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+
 为 OpenClaw Agent 深度适配的 MiniMax 多功能工具包，支持语音合成、图片生成、视频生成、音乐生成，以及飞书消息推送。
 
 ---
@@ -27,18 +30,17 @@
 ## 快速开始
 
 ```bash
-# 1. 克隆项目
+# 克隆项目
 git clone https://github.com/victor0602/minimax-toolkit.git
 cd minimax-toolkit
 
-# 2. 复制配置模板
-cp .env.example .env
-# 编辑 .env，填入你的 MINIMAX_API_KEY
-
-# 3. 运行首次配置引导
+# 运行首次配置引导
 python3 scripts/toolkit.py setup
 
-# 4. 验证环境
+# 非交互模式（使用已有环境变量）
+python3 scripts/toolkit.py setup --non-interactive
+
+# 验证环境
 python3 scripts/toolkit.py doctor --fix
 ```
 
@@ -160,9 +162,11 @@ python3 scripts/test_features.py
 minimax-toolkit/
 ├── SKILL.md                    # OpenClaw 技能说明
 ├── README.md                   # 本文件
-├── .env.example                # 环境变量模板
+├── _meta.json                 # 元数据（版本信息）
+├── .env.example               # 环境变量模板
+├── .gitignore                 # Git 忽略配置
 ├── docs/
-│   └── architecture.svg        # 系统架构图
+│   └── architecture.svg      # 系统架构图
 └── scripts/
     ├── toolkit.py             # 统一 CLI 入口
     ├── setup.sh               # 首次配置引导
@@ -171,7 +175,7 @@ minimax-toolkit/
     ├── test_features.py       # 功能测试
     ├── lib/
     │   ├── common.sh          # 共享函数（load_env, check_api_key）
-    │   └── diagnose.sh       # 诊断函数库
+    │   └── diagnose.sh        # 诊断函数库
     ├── tts.py / tts/          # 语音合成
     ├── image_generate.py / image/  # 图片生成
     ├── music/                 # 音乐生成
@@ -190,11 +194,14 @@ minimax-toolkit/
 - 🎯 **首次运行检测**：未配置时自动提示引导
 - 📋 **feishu 群管理**：`feishu list` / `feishu send`
 - 📊 **系统架构图**：SVG 彩色架构图
+- 🧪 **测试套件**：`test_env.py` / `test_features.py`
 
 **改进：**
 - 🔧 **setup.sh 增强**：检测现有环境变量，询问确认使用
 - 🔧 **精准错误码**：所有错误返回 `E_*` 码 + 修复建议
 - 🔧 **Music 超时处理**：服务器延迟时 Skip 而非 FAIL
+- 🔧 **跨平台兼容**：修复 macOS `date` 和 bash 3.2 兼容性问题
+- 🔧 **setup --non-interactive**：支持非交互模式
 
 ---
 
