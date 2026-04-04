@@ -8,6 +8,7 @@ Usage:
 Commands:
     setup       First-run setup wizard (interactive)
     check       Run diagnostic checks (use --json for machine output)
+    doctor      Diagnose and fix environment issues (--fix to auto-fix)
     env         Show or set environment variables
     tts         Text-to-speech
     image       Image generation
@@ -17,11 +18,12 @@ Commands:
 
 Examples:
     python3 scripts/toolkit.py check --json          # Agent: get all status
-    python3 scripts/toolkit.py setup                  # First-run setup
-    python3 scripts/toolkit.py tts "hello world"     # Quick TTS
-    python3 scripts/toolkit.py image "a cat"         # Quick image
+    python3 scripts/toolkit.py doctor --fix         # Auto-fix environment issues
+    python3 scripts/toolkit.py setup                 # First-run setup
+    python3 scripts/toolkit.py tts "hello world"    # Quick TTS
+    python3 scripts/toolkit.py image "a cat"        # Quick image
     python3 scripts/toolkit.py env --show           # Show current config
-    python3 scripts/toolkit.py feishu list          # List all bot groups
+    python3 scripts/toolkit.py feishu list           # List all bot groups
     python3 scripts/toolkit.py feishu send <file>   # Send file to selected group
 """
 import sys
@@ -30,6 +32,7 @@ import json
 import subprocess
 import argparse
 import shlex
+import shutil
 import requests
 from pathlib import Path
 
@@ -94,14 +97,48 @@ def load_env():
             return
 
 
-def require_api_key():
+def is_first_run():
+    """Check if this is the first time running the toolkit."""
+    env_file = PROJECT_ROOT / ".env"
+    if not env_file.is_file():
+        return True
+    # Check if MINIMAX_API_KEY is set
     load_env()
-    if not os.environ.get("MINIMAX_API_KEY"):
-        error_exit(
-            "E_API_KEY_MISSING",
-            "MINIMAX_API_KEY is not set",
-            hint="Run: python3 scripts/toolkit.py env --key <your-api-key>"
-        )
+    return not bool(os.environ.get("MINIMAX_API_KEY", "").strip())
+
+
+def check_dependencies():
+    """Check all system dependencies. Returns (ok, missing_list)."""
+    deps = ["jq", "curl", "ffmpeg", "python3", "base64"]
+    missing = []
+    for dep in deps:
+        if not shutil.which(dep):
+            missing.append(dep)
+    return len(missing) == 0, missing
+
+
+def prompt_first_run():
+    """Show first-run prompt."""
+    print("=" * 50)
+    print("MiniMax Toolkit — First Run Setup")
+    print("=" * 50)
+    print()
+    print("Welcome! It looks like this is your first time running MiniMax Toolkit.")
+    print()
+    print("To get started, you need to:")
+    print("  1. Configure your API key")
+    print("  2. Check system dependencies")
+    print()
+    print("Run the setup wizard:")
+    print("  python3 scripts/toolkit.py setup")
+    print()
+    print("Or configure manually:")
+    print("  python3 scripts/toolkit.py env --key YOUR_API_KEY")
+    print()
+    print("Run dependency check:")
+    print("  python3 scripts/toolkit.py doctor")
+    print()
+    print("=" * 50)
 
 
 def run_bash(script_path, *args, capture=True, check=True, timeout=300):
@@ -202,6 +239,137 @@ def cmd_check(args):
         print(result.stdout)
         print(result.stderr, file=sys.stderr)
     sys.exit(result.returncode)
+
+
+def cmd_doctor(args):
+    """Run diagnostics and optionally fix issues."""
+    load_env()
+
+    print("=" * 50)
+    print("MiniMax Toolkit — Environment Doctor")
+    print("=" * 50)
+    print()
+
+    issues = []
+    fixes = []
+
+    # 1. Check dependencies
+    print("[1/5] Checking system dependencies...")
+    deps_ok, missing_deps = check_dependencies()
+    if deps_ok:
+        print("  ✓ All system dependencies installed")
+    else:
+        msg = f"Missing: {', '.join(missing_deps)}"
+        print(f"  ✗ {msg}")
+        issues.append(("dependencies", "MISSING_DEPS", msg, f"brew install {' '.join(missing_deps)}"))
+        if args.fix:
+            print(f"  → Running: brew install {' '.join(missing_deps)}")
+            result = subprocess.run(["brew", "install"] + missing_deps, capture_output=True, text=True)
+            if result.returncode == 0:
+                print(f"  ✓ Installed successfully")
+                fixes.append("dependencies")
+            else:
+                print(f"  ✗ Installation failed: {result.stderr[:200]}")
+    print()
+
+    # 2. Check API key
+    print("[2/5] Checking API key...")
+    api_key = os.environ.get("MINIMAX_API_KEY", "")
+    if not api_key:
+        msg = "MINIMAX_API_KEY not set"
+        print(f"  ✗ {msg}")
+        issues.append(("api_key", "E_API_KEY_MISSING", msg, "Run: python3 scripts/toolkit.py env --key YOUR_KEY"))
+    elif api_key in ("sk-cp-xxx", "sk-api-xxx", "YOUR_API_KEY"):
+        msg = "API key is placeholder value"
+        print(f"  ✗ {msg}")
+        issues.append(("api_key", "E_API_KEY_INVALID", msg, "Run: python3 scripts/toolkit.py env --key YOUR_REAL_KEY"))
+    else:
+        masked = api_key[:8] + "..."
+        key_type = "Token Plan" if api_key.startswith("sk-cp-") else "API Key" if api_key.startswith("sk-api-") else "unknown"
+        print(f"  ✓ API key present ({masked}) [{key_type}]")
+    print()
+
+    # 3. Check env file
+    print("[3/5] Checking configuration file...")
+    env_file = PROJECT_ROOT / ".env"
+    if env_file.is_file():
+        print(f"  ✓ Config file exists: {env_file}")
+    else:
+        msg = "No .env file found"
+        print(f"  ✗ {msg}")
+        issues.append(("env_file", "E_ENV_FILE_MISSING", msg, "Run: python3 scripts/toolkit.py setup"))
+        if args.fix and api_key:
+            print(f"  → Creating .env file with existing API key")
+            with open(env_file, "w") as f:
+                f.write(f"""# MiniMax API 配置
+MINIMAX_API_KEY={api_key}
+MINIMAX_API_HOST=https://api.minimaxi.com
+""")
+            print(f"  ✓ Created {env_file}")
+            fixes.append("env_file")
+    print()
+
+    # 4. Check Feishu config (optional)
+    print("[4/5] Checking Feishu configuration...")
+    feishu_app_id = os.environ.get("FEISHU_APP_ID", "")
+    feishu_app_secret = os.environ.get("FEISHU_APP_SECRET", "")
+    if feishu_app_id and feishu_app_secret:
+        print(f"  ✓ Feishu credentials configured")
+    else:
+        print(f"  ⚠ Feishu not configured (optional for Feishu features)")
+        print(f"    Set FEISHU_APP_ID and FEISHU_APP_SECRET for Feishu integration")
+    print()
+
+    # 5. Check network connectivity
+    print("[5/5] Checking API connectivity...")
+    if api_key and api_key not in ("sk-cp-xxx", "sk-api-xxx", "YOUR_API_KEY"):
+        import requests as req
+        try:
+            resp = req.post(
+                f"{os.environ.get('MINIMAX_API_HOST', 'https://api.minimaxi.com')}/v1/t2a_v2",
+                headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
+                json={"model": "speech-2.8-hd", "text": "test", "voice_setting": {"voice_id": "female-shaonv", "speed": 1.0}, "audio_setting": {"sample_rate": 32000, "bitrate": 128000, "format": "mp3", "channel": 1}},
+                timeout=15
+            )
+            if resp.status_code < 400:
+                print(f"  ✓ API connectivity OK (status: {resp.status_code})")
+            else:
+                err_msg = resp.json().get("base_resp", {}).get("status_msg", f"HTTP {resp.status_code}")
+                msg = f"API error: {err_msg}"
+                print(f"  ✗ {msg}")
+                issues.append(("api_connectivity", "E_API_ERROR", msg, "Check your API key and account status"))
+        except req.exceptions.Timeout:
+            msg = "API request timeout"
+            print(f"  ✗ {msg}")
+            issues.append(("api_connectivity", "E_NETWORK_TIMEOUT", msg, "Check your network connection"))
+        except Exception as e:
+            msg = f"Connection failed: {str(e)[:100]}"
+            print(f"  ✗ {msg}")
+            issues.append(("api_connectivity", "E_NETWORK_ERROR", msg, "Check network and proxy settings"))
+    else:
+        print(f"  ⊘ Skipped (no API key)")
+    print()
+
+    # Summary
+    print("=" * 50)
+    print("Summary")
+    print("=" * 50)
+    if not issues:
+        print("✓ All checks passed!")
+        if fixes:
+            print(f"Fixed: {', '.join(fixes)}")
+        return 0
+
+    print(f"Found {len(issues)} issue(s):")
+    for area, code, msg, fix in issues:
+        print(f"  [{code}] {msg}")
+        print(f"          Fix: {fix}")
+    print()
+    if args.fix:
+        print(f"Auto-fixed: {', '.join(fixes) if fixes else 'none'}")
+    else:
+        print("Run with --fix to attempt auto-fix")
+    return 1
 
 
 def cmd_env(args):
@@ -551,6 +719,10 @@ def build_parser():
     p_check.add_argument("--json", action="store_true", help="JSON output (for agents)")
     p_check.add_argument("--feature", choices=["tts","image","music","video","mcporter","env","api_key","dependencies"], help="Check specific feature only")
 
+    # doctor
+    p_doctor = sub.add_parser("doctor", help="Diagnose and fix environment issues")
+    p_doctor.add_argument("--fix", action="store_true", help="Attempt to auto-fix detected issues")
+
     # env
     p_env = sub.add_parser("env", help="Show or set environment variables")
     p_env.add_argument("--show", action="store_true", help="Show current environment")
@@ -607,10 +779,30 @@ def main():
         parser.print_help()
         sys.exit(0)
 
+    # First-run detection (skip for setup, doctor, env commands)
+    if args.command not in ("setup", "doctor", "env") and is_first_run():
+        print("=" * 50)
+        print("Welcome to MiniMax Toolkit!")
+        print("=" * 50)
+        print()
+        print("It looks like this is your first time running the toolkit.")
+        print("Please run the setup wizard first:")
+        print()
+        print("  python3 scripts/toolkit.py setup")
+        print()
+        print("Or configure your API key manually:")
+        print("  python3 scripts/toolkit.py env --key YOUR_KEY")
+        print()
+        print("Check environment with:")
+        print("  python3 scripts/toolkit.py doctor")
+        print("=" * 50)
+        sys.exit(1)
+
     # Dispatch
     {
         "setup": cmd_setup,
         "check": cmd_check,
+        "doctor": cmd_doctor,
         "env": cmd_env,
         "tts": cmd_tts,
         "image": cmd_image,

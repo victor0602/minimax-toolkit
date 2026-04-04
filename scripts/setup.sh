@@ -99,9 +99,27 @@ check_env_file() {
 
 # Setup .env
 setup_env_file() {
-  local api_key=""
-  prompt_input "Enter your MiniMax API Key (sk-cp- or sk-api-)" api_key
-  api_key=$(echo "$api_key" | xargs)
+  local api_key="${MINIMAX_API_KEY:-}"
+  local feishu_app_id="${FEISHU_APP_ID:-}"
+  local feishu_app_secret="${FEISHU_APP_SECRET:-}"
+
+  # Check if we have existing env vars to use
+  if [[ -n "$api_key" && "$api_key" != "sk-cp-xxx" && "$api_key" != "sk-api-xxx" && "$api_key" != "YOUR_API_KEY" ]]; then
+    info "Found MINIMAX_API_KEY in environment: ${api_key:0:8}..."
+    if is_tty; then
+      echo -n "Use this API key? [Y/n]: " >&2
+      read -r use_existing < /dev/tty
+      use_existing="${use_existing:-Y}"
+      if [[ "$use_existing" =~ ^[Nn]$ ]]; then
+        api_key=""
+      fi
+    fi
+  fi
+
+  if [[ -z "$api_key" ]]; then
+    prompt_input "Enter your MiniMax API Key (sk-cp- or sk-api-)" api_key
+    api_key=$(echo "$api_key" | xargs)
+  fi
 
   if [[ -z "$api_key" ]]; then
     error "API Key cannot be empty."
@@ -110,6 +128,36 @@ setup_env_file() {
 
   if [[ "$api_key" != sk-cp-* && "$api_key" != sk-api-* ]]; then
     warn "API Key should start with 'sk-cp-' or 'sk-api-'. Proceeding anyway..."
+  fi
+
+  # Check for Feishu env vars
+  if [[ -n "$feishu_app_id" && -n "$feishu_app_secret" ]]; then
+    info "Found Feishu credentials in environment"
+    if is_tty; then
+      echo -n "Use this Feishu configuration? [Y/n]: " >&2
+      read -r use_existing_feishu < /dev/tty
+      use_existing_feishu="${use_existing_feishu:-Y}"
+      if [[ "$use_existing_feishu" =~ ^[Nn]$ ]]; then
+        feishu_app_id=""
+        feishu_app_secret=""
+      fi
+    fi
+  fi
+
+  if [[ -z "$feishu_app_id" ]]; then
+    if is_tty; then
+      echo -n "Enter Feishu App ID (leave empty to skip): " >&2
+      read -r feishu_app_id < /dev/tty
+      feishu_app_id=$(echo "$feishu_app_id" | xargs)
+    fi
+  fi
+
+  if [[ -z "$feishu_app_secret" && -n "$feishu_app_id" ]]; then
+    if is_tty; then
+      echo -n "Enter Feishu App Secret: " >&2
+      read -r feishu_app_secret < /dev/tty
+      feishu_app_secret=$(echo "$feishu_app_secret" | xargs)
+    fi
   fi
 
   local env_file="$PROJECT_ROOT/.env"
@@ -122,12 +170,18 @@ MINIMAX_API_KEY=$api_key
 
 # API 地址（默认中国大陆）
 MINIMAX_API_HOST=https://api.minimaxi.com
+
+# Feishu 配置（可选）
+FEISHU_APP_ID=${feishu_app_id:-}
+FEISHU_APP_SECRET=${feishu_app_secret:-}
 EOF
 
   success ".env file created at $env_file"
   # Load it
   export MINIMAX_API_KEY="$api_key"
   export MINIMAX_API_HOST="https://api.minimaxi.com"
+  [[ -n "$feishu_app_id" ]] && export FEISHU_APP_ID="$feishu_app_id"
+  [[ -n "$feishu_app_secret" ]] && export FEISHU_APP_SECRET="$feishu_app_secret"
 }
 
 # Validate API key via list-voices
