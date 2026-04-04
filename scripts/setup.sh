@@ -208,9 +208,9 @@ validate_api_key() {
   fi
 
   local key_type="unknown"
-  case "${MINIMAX_API_KEY:0:5}" in
-    sk-cp-) key_type="Token Plan (sk-cp-)" ;;
-    sk-api) key_type="API Key (sk-api-)" ;;
+  case "${MINIMAX_API_KEY:0:6}" in
+    sk-cp-*) key_type="Token Plan (sk-cp-)" ;;
+    sk-api*) key_type="API Key (sk-api-)" ;;
   esac
   success "API Key valid ($key_type)"
   return 0

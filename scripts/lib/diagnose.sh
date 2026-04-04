@@ -12,6 +12,24 @@ PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 source "$(dirname "${BASH_SOURCE[0]}")/common.sh"
 
 # ---------------------------------------------------------------------------
+# Time helpers (portable millisecond timestamp)
+# ---------------------------------------------------------------------------
+
+_date_ms() {
+  local out
+  # Try Linux format first (works on Linux, fails on macOS)
+  out=$(date +%s%3N 2>/dev/null)
+  if [[ "$out" =~ ^[0-9]+$ ]]; then
+    echo "$out"
+    return
+  fi
+  # Fallback: macOS or other BSD (strip trailing N if present)
+  out=$(date +%s000 2>/dev/null) && echo "$out" && return
+  # Last resort: python3
+  python3 -c 'import time; print(int(time.time()*1000))'
+}
+
+# ---------------------------------------------------------------------------
 # JSON helpers
 # ---------------------------------------------------------------------------
 
@@ -95,10 +113,14 @@ diag_check_env() {
   fi
 
   local key_type="unknown"
-  local key_prefix="${MINIMAX_API_KEY:0:5:-}"
+  local key_type="unknown"
+  local key_prefix=""
+  if [[ -n "${MINIMAX_API_KEY:-}" ]]; then
+    key_prefix="${MINIMAX_API_KEY:0:6}"
+  fi
   case "$key_prefix" in
-    sk-cp-) key_type="token_plan" ;;
-    sk-api) key_type="api_key" ;;
+    sk-cp-*) key_type="token_plan" ;;
+    sk-api*) key_type="api_key" ;;
   esac
 
   # Mask key for display
@@ -118,13 +140,12 @@ diag_check_api_key() {
     _json_status "api_key" "missing"
     return 1
   fi
-  _json_status "api_key" "ok" "type" "$(
-    case "${MINIMAX_API_KEY:0:5}" in
-      sk-cp-) echo "token_plan" ;;
-      sk-api) echo "api_key" ;;
-      *) echo "unknown" ;;
-    esac
-  )"
+  local key_type="unknown"
+  case "${MINIMAX_API_KEY:0:6}" in
+    sk-cp-*) key_type="token_plan" ;;
+    sk-api*) key_type="api_key" ;;
+  esac
+  _json_status "api_key" "ok" "type" "$key_type"
   return 0
 }
 
@@ -163,7 +184,7 @@ diag_check_tts() {
   fi
 
   local start end latency
-  start=$(date +%s%3N)
+  start=$(_date_ms)
   local resp
   resp=$(_api_request POST "t2a_v2" '{"model":"speech-2.8-hd","text":"test","voice_setting":{"voice_id":"female-shaonv","speed":1.0,"vol":1.0,"pitch":0},"audio_setting":{"sample_rate":32000,"bitrate":128000,"format":"mp3","channel":1},"stream":false,"output_format":"hex"}' 2>/dev/null) || {
     local err_msg
@@ -171,7 +192,7 @@ diag_check_tts() {
     _json_status "tts" "error" "reason" "$err_msg"
     return 0
   }
-  end=$(date +%s%3N)
+  end=$(_date_ms)
   latency=$((end - start))
 
   local audio_data
@@ -192,7 +213,7 @@ diag_check_image() {
   fi
 
   local start end latency
-  start=$(date +%s%3N)
+  start=$(_date_ms)
   local resp
   resp=$(_api_request POST "image_generation" '{"model":"image-01","prompt":"test","response_format":"url","n":1}' 2>/dev/null) || {
     local err_msg
@@ -200,7 +221,7 @@ diag_check_image() {
     _json_status "image" "error" "reason" "$err_msg"
     return 0
   }
-  end=$(date +%s%3N)
+  end=$(_date_ms)
   latency=$((end - start))
 
   local url
@@ -221,7 +242,7 @@ diag_check_music() {
   fi
 
   local start end latency
-  start=$(date +%s%3N)
+  start=$(_date_ms)
   local resp
   resp=$(_api_request POST "music_generation" '{"model":"music-2.5","prompt":"short test","output_format":"url","stream":false}' 2>/dev/null) || {
     local err_msg
@@ -229,7 +250,7 @@ diag_check_music() {
     _json_status "music" "error" "reason" "$err_msg"
     return 0
   }
-  end=$(date +%s%3N)
+  end=$(_date_ms)
   latency=$((end - start))
 
   local audio_url
@@ -250,7 +271,7 @@ diag_check_video() {
   fi
 
   local start end latency
-  start=$(date +%s%3N)
+  start=$(_date_ms)
   local resp
   # Use a simple t2v with minimal prompt
   resp=$(_api_request POST "video_generation" '{"model":"MiniMax-Hailuo-2.3","prompt":"test","duration":6,"resolution":"768P"}' 2>/dev/null) || {
@@ -259,7 +280,7 @@ diag_check_video() {
     _json_status "video" "error" "reason" "$err_msg"
     return 0
   }
-  end=$(date +%s%3N)
+  end=$(_date_ms)
   latency=$((end - start))
 
   local task_id

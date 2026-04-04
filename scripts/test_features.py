@@ -224,6 +224,9 @@ def test_video_generation():
                 print(f"  {PASS} Video task created: {task_id}")
                 return True
         err = data.get("base_resp", {}).get("status_msg", f"HTTP {resp.status_code}")
+        if "usage limit" in err.lower():
+            print(f"  {SKIP} Video API usage limit exceeded (quota exhausted)")
+            return None
         print(f"  {FAIL} Video generation failed: {err}")
         return False
     except Exception as e:
