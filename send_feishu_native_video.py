@@ -1,72 +1,74 @@
+#!/usr/bin/env python3
+"""
+发送原生视频气泡到飞书（封面图 + mp4 分别上传）
+  python3 send_feishu_native_video.py <video_file>
+"""
 import sys
-import requests
-import json
 import os
 import subprocess
+import scripts.lib.feishu as feishu
 
-# === 核心配置区（从环境变量读取，敏感信息切勿硬编码） ===
-APP_ID = os.environ.get("FEISHU_APP_ID", "")
-APP_SECRET = os.environ.get("FEISHU_APP_SECRET", "")
 CHAT_ID = os.environ.get("FEISHU_CHAT_ID", "")
 
-def send_native_video(video_path):
-    if not os.path.exists(video_path):
-        print(f"找不到视频文件: {video_path}")
-        return
 
-    # 1. 获取飞书授权 Token
-    print("正在获取授权 Token...")
-    url_token = "https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal"
-    res_token = requests.post(url_token, json={"app_id": APP_ID, "app_secret": APP_SECRET}).json()
-    token = res_token.get("tenant_access_token")
-    headers = {"Authorization": f"Bearer {token}"}
-
-    # 2. 【核心魔法】用 ffmpeg 自动抽取第一帧作为封面图
-    print("正在抽取视频封面...")
+def extract_cover(video_path):
+    """用 ffmpeg 抽取第一帧作为封面，返回临时 jpg 路径；失败返回 None"""
     cover_path = video_path + "_cover.jpg"
-    subprocess.run(["ffmpeg", "-i", video_path, "-vframes", "1", "-f", "image2", cover_path, "-y"], capture_output=True)
+    r = subprocess.run(
+        ["ffmpeg", "-i", video_path, "-vframes", "1", "-f", "image2", cover_path, "-y"],
+        capture_output=True, text=True,
+    )
+    if r.returncode != 0:
+        print(f"[Error] 封面倒抽取失败: {r.stderr}")
+        return None
+    return cover_path
 
-    # 3. 上传封面图，获取 image_key
-    print("正在上传封面图...")
-    url_img = "https://open.feishu.cn/open-apis/im/v1/images"
-    with open(cover_path, 'rb') as f:
-        res_img = requests.post(url_img, headers=headers, data={"image_type": "message"}, files={"image": f}).json()
-    image_key = res_img.get("data", {}).get("image_key")
-
-    # 用完就删掉临时封面
-    if os.path.exists(cover_path):
-        os.remove(cover_path)
-
-    if not image_key:
-        print("封面上传失败:", res_img)
-        return
-    print(f"封面上传成功: {image_key}")
-
-    # 4. 上传视频本体，获取 file_key
-    print("正在上传视频本体...")
-    url_file = "https://open.feishu.cn/open-apis/im/v1/files"
-    with open(video_path, 'rb') as f:
-        res_file = requests.post(url_file, headers=headers, data={"file_type": "mp4", "file_name": os.path.basename(video_path)}, files={"file": f}).json()
-    file_key = res_file.get("data", {}).get("file_key")
-
-    if not file_key:
-        print("视频上传失败:", res_file)
-        return
-    print(f"视频上传成功: {file_key}")
-
-    # 5. 组合双 Key，发送原生 media 消息
-    print("正在发送原生视频预览气泡...")
-    url_send = "https://open.feishu.cn/open-apis/im/v1/messages?receive_id_type=chat_id"
-    payload = {
-        "receive_id": CHAT_ID,
-        "msg_type": "media",  # 【划重点】飞书的视频类型叫 media，不叫 video！
-        "content": json.dumps({"file_key": file_key, "image_key": image_key})
-    }
-    res_send = requests.post(url_send, headers=headers, json=payload).json()
-    print("任务完成！发送结果:", json.dumps(res_send, indent=2))
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("错误：请提供本地视频文件的路径。")
+        print("用法: python3 send_feishu_native_video.py <video_file>")
         sys.exit(1)
-    send_native_video(sys.argv[1])
+
+    video_path = sys.argv[1]
+    if not os.path.exists(video_path):
+        print(f"[Error] 文件不存在: {video_path}")
+        sys.exit(1)
+
+    receive_id = os.environ.get("FEISHU_CHAT_ID", "")
+    if not receive_id:
+        print("[Error] FEISHU_CHAT_ID is not set.")
+        sys.exit(1)
+
+    api = feishu.FeishuAPI()
+    if not api.check_config():
+        sys.exit(1)
+
+    # 1. 抽取封面
+    print("[Info] 正在抽取视频封面...")
+    cover_path = extract_cover(video_path)
+    if not cover_path:
+        sys.exit(1)
+
+    # 2. 上传封面
+    print("[Info] 正在上传封面...")
+    image_key = api.upload_image(cover_path)
+    os.unlink(cover_path)
+    if not image_key:
+        sys.exit(1)
+    print(f"[Info] 封面上传成功: {image_key}")
+
+    # 3. 上传视频
+    print("[Info] 正在上传视频...")
+    file_key = api.upload_file(video_path, "mp4")
+    if not file_key:
+        sys.exit(1)
+    print(f"[Info] 视频上传成功: {file_key}")
+
+    # 4. 发送原生视频气泡
+    print("[Info] 正在发送视频气泡...")
+    res = api.send_media(receive_id, file_key, image_key)
+    if not res:
+        sys.exit(1)
+
+    print("[OK] 原生视频气泡发送成功")
+    sys.exit(0)
