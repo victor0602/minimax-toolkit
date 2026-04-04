@@ -6,6 +6,12 @@
 
 ---
 
+## 系统架构
+
+![Architecture](./docs/architecture.svg)
+
+---
+
 ## 核心亮点
 
 **🤝 OpenClaw 深度适配**
