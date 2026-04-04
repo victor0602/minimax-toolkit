@@ -6,10 +6,10 @@ import os
 import subprocess
 import tempfile
 
-# === 核心配置区 ===
-APP_ID = "cli_a9140602d7389bca"
-APP_SECRET = "ooqewzPrVtFpCWUDnWGnxfoKZ6dmIYVz"
-CHAT_ID = "oc_c9183158e7521c3ead125cb26be15099"  # OpenClaw主控群
+# === 核心配置区（从环境变量读取，敏感信息切勿硬编码） ===
+APP_ID = os.environ.get("FEISHU_APP_ID", "")
+APP_SECRET = os.environ.get("FEISHU_APP_SECRET", "")
+CHAT_ID = os.environ.get("FEISHU_CHAT_ID", "")
 
 def convert_to_opus(input_path):
     """将音频转换为 .opus 格式"""
