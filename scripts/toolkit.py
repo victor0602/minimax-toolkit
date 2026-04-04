@@ -13,6 +13,7 @@ Commands:
     image       Image generation
     music       Music generation
     video       Video generation
+    feishu      Feishu group chat management and sending
 
 Examples:
     python3 scripts/toolkit.py check --json          # Agent: get all status
@@ -20,6 +21,8 @@ Examples:
     python3 scripts/toolkit.py tts "hello world"     # Quick TTS
     python3 scripts/toolkit.py image "a cat"         # Quick image
     python3 scripts/toolkit.py env --show           # Show current config
+    python3 scripts/toolkit.py feishu list          # List all bot groups
+    python3 scripts/toolkit.py feishu send <file>   # Send file to selected group
 """
 import sys
 import os
@@ -27,6 +30,7 @@ import json
 import subprocess
 import argparse
 import shlex
+import requests
 from pathlib import Path
 
 SCRIPT_DIR = Path(__file__).parent.resolve()
@@ -344,6 +348,190 @@ def cmd_video(args):
 
 
 # ---------------------------------------------------------------------------
+# Feishu helpers
+# ---------------------------------------------------------------------------
+
+def get_feishu_token():
+    """Get Feishu tenant access token."""
+    app_id = os.environ.get("FEISHU_APP_ID", "")
+    app_secret = os.environ.get("FEISHU_APP_SECRET", "")
+    if not app_id or not app_secret:
+        error_exit("E_FEISHU_NOT_CONFIGURED", "FEISHU_APP_ID and FEISHU_APP_SECRET are not set")
+    res = requests.post(
+        "https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal",
+        json={"app_id": app_id, "app_secret": app_secret}
+    ).json()
+    token = res.get("tenant_access_token")
+    if not token:
+        error_exit("E_FEISHU_TOKEN_FAILED", f"Failed to get token: {res}")
+    return token
+
+
+def list_feishu_chats(token):
+    """List all chats the bot is in."""
+    headers = {"Authorization": f"Bearer {token}"}
+    chats = []
+    page_token = None
+    while True:
+        params = {"page_size": 50}
+        if page_token:
+            params["page_token"] = page_token
+        res = requests.get(
+            "https://open.feishu.cn/open-apis/im/v1/chats",
+            headers=headers, params=params
+        ).json()
+        items = res.get("data", {}).get("items", [])
+        chats.extend(items)
+        page_token = res.get("data", {}).get("page_token")
+        if not page_token or not res.get("data", {}).get("has_more", False):
+            break
+    return chats
+
+
+def select_chat_interactive(chats):
+    """Let user select a chat interactively."""
+    if not chats:
+        print("No chats found.")
+        return None
+    print(f"\n{'='*50}")
+    print(f"Found {len(chats)} chats:")
+    print(f"{'='*50}")
+    for i, chat in enumerate(chats, 1):
+        name = chat.get("name", "Unnamed")
+        member_count = chat.get("member_count", 0)
+        print(f"  [{i}] {name} (members: {member_count})")
+    print(f"{'='*50}")
+    print("  [0] Cancel")
+    while True:
+        try:
+            choice = input("\nEnter chat number: ").strip()
+            idx = int(choice)
+            if idx == 0:
+                return None
+            if 1 <= idx <= len(chats):
+                return chats[idx - 1]
+            print("Invalid number")
+        except ValueError:
+            print("Please enter a number")
+
+
+def send_image_to_chat(token, file_path, chat_id):
+    """Upload and send image to chat."""
+    headers = {"Authorization": f"Bearer {token}"}
+    with open(file_path, "rb") as f:
+        files = {"image": (os.path.basename(file_path), f, "image/jpeg")}
+        data = {"image_type": "message"}
+        res = requests.post(
+            "https://open.feishu.cn/open-apis/im/v1/images",
+            headers=headers, data=data, files=files
+        ).json()
+    image_key = res.get("data", {}).get("image_key")
+    if not image_key:
+        return False, f"Upload failed: {res}"
+    payload = {
+        "receive_id": chat_id,
+        "msg_type": "image",
+        "content": json.dumps({"image_key": image_key})
+    }
+    res = requests.post(
+        "https://open.feishu.cn/open-apis/im/v1/messages?receive_id_type=chat_id",
+        headers=headers, json=payload
+    ).json()
+    if res.get("code") == 0:
+        return True, "Sent successfully"
+    return False, f"Send failed: {res}"
+
+
+def send_file_to_chat(token, file_path, chat_id):
+    """Upload and send file to chat."""
+    headers = {"Authorization": f"Bearer {token}"}
+    with open(file_path, "rb") as f:
+        files = {"file": (os.path.basename(file_path), f, "application/octet-stream")}
+        data = {
+            "file_name": os.path.basename(file_path),
+            "file_size": os.path.getsize(file_path)
+        }
+        res = requests.post(
+            "https://open.feishu.cn/open-apis/im/v1/files",
+            headers=headers, data=data, files=files
+        ).json()
+    file_key = res.get("data", {}).get("file_key")
+    if not file_key:
+        return False, f"Upload failed: {res}"
+    payload = {
+        "receive_id": chat_id,
+        "msg_type": "file",
+        "content": json.dumps({"file_key": file_key})
+    }
+    res = requests.post(
+        "https://open.feishu.cn/open-apis/im/v1/messages?receive_id_type=chat_id",
+        headers=headers, json=payload
+    ).json()
+    if res.get("code") == 0:
+        return True, "Sent successfully"
+    return False, f"Send failed: {res}"
+
+
+def get_file_type(file_path):
+    """Return file category based on extension."""
+    ext = os.path.splitext(file_path)[1].lower()
+    image_exts = {".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp"}
+    audio_exts = {".mp3", ".wav", ".m4a", ".aac", ".ogg", ".wma"}
+    video_exts = {".mp4", ".avi", ".mov", ".mkv", ".flv", ".wmv"}
+    if ext in image_exts:
+        return "image"
+    elif ext in audio_exts:
+        return "audio"
+    elif ext in video_exts:
+        return "video"
+    return "file"
+
+
+# ---------------------------------------------------------------------------
+# Feishu command
+# ---------------------------------------------------------------------------
+
+def cmd_feishu(args):
+    if args.feishu_sub == "list":
+        token = get_feishu_token()
+        chats = list_feishu_chats(token)
+        for chat in chats:
+            name = chat.get("name", "Unnamed")
+            chat_id = chat.get("chat_id", "")
+            member_count = chat.get("member_count", 0)
+            print(f"  {name} | {chat_id} | {member_count} members")
+        return
+
+    elif args.feishu_sub == "send":
+        if not args.file:
+            error_exit("E_MISSING_ARG", "File path is required for send command")
+        if not os.path.exists(args.file):
+            error_exit("E_FILE_NOT_FOUND", f"File not found: {args.file}")
+
+        token = get_feishu_token()
+        chats = list_feishu_chats(token)
+        chat = select_chat_interactive(chats)
+        if not chat:
+            print("Cancelled")
+            return
+
+        chat_id = chat.get("chat_id")
+        chat_name = chat.get("name")
+        file_type = get_file_type(args.file)
+
+        if file_type == "image":
+            success, msg = send_image_to_chat(token, args.file, chat_id)
+        else:
+            success, msg = send_file_to_chat(token, args.file, chat_id)
+
+        print(f"\n[{chat_name}] {msg}")
+        return
+
+    else:
+        error_exit("E_UNKNOWN_SUBCOMMAND", f"Unknown feishu subcommand: {args.feishu_sub}")
+
+
+# ---------------------------------------------------------------------------
 # Argument parser
 # ---------------------------------------------------------------------------
 
@@ -397,6 +585,13 @@ def build_parser():
     p_video.add_argument("--first-frame", help="First frame image path")
     p_video.add_argument("-o", "--output", help="Output file path")
 
+    # feishu
+    p_feishu = sub.add_parser("feishu", help="Feishu group chat management")
+    feishu_sub = p_feishu.add_subparsers(dest="feishu_sub", help="Feishu subcommands")
+    p_list = feishu_sub.add_parser("list", help="List all bot groups")
+    p_send = feishu_sub.add_parser("send", help="Send file to selected group")
+    p_send.add_argument("file", help="File path to send (image/audio/video)")
+
     return parser
 
 
@@ -421,6 +616,7 @@ def main():
         "image": cmd_image,
         "music": cmd_music,
         "video": cmd_video,
+        "feishu": cmd_feishu,
     }[args.command](args)
 
 
