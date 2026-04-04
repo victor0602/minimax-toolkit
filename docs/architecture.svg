@@ -72,15 +72,16 @@
   <text x="482" y="276" font-family="system-ui,sans-serif" font-size="9" fill="#94A3B8">首尾帧控制 · 6-10秒</text>
 
   <!-- Music -->
-  <rect x="585" y="180" width="165" height="140" rx="20" fill="#fff" filter="url(#shadow)"/>
-  <rect x="585" y="180" width="165" height="140" rx="20" fill="url(#g-purple)" opacity="0.08"/>
+  <rect x="585" y="180" width="165" height="156" rx="20" fill="#fff" filter="url(#shadow)"/>
+  <rect x="585" y="180" width="165" height="156" rx="20" fill="url(#g-purple)" opacity="0.08"/>
   <circle cx="635" cy="218" r="22" fill="url(#g-purple)"/>
   <text x="635" y="224" text-anchor="middle" font-family="system-ui,sans-serif" font-size="18" fill="#fff">🎵</text>
   <text x="667" y="215" font-family="system-ui,sans-serif" font-size="14" font-weight="700" fill="#1E293B">Music</text>
   <text x="667" y="230" font-family="system-ui,sans-serif" font-size="9.5" fill="#64748B">音乐生成</text>
   <text x="667" y="248" font-family="system-ui,sans-serif" font-size="9" fill="#94A3B8">music-2.5</text>
   <text x="667" y="262" font-family="system-ui,sans-serif" font-size="9" fill="#94A3B8">歌词 + 旋律</text>
-  <text x="667" y="276" font-family="system-ui,sans-serif" font-size="9" fill="#94A3B8">纯音乐模式 · ffmpeg后处理</text>
+  <text x="667" y="276" font-family="system-ui,sans-serif" font-size="9" fill="#94A3B8">纯音乐模式</text>
+  <text x="667" y="290" font-family="system-ui,sans-serif" font-size="9" fill="#94A3B8">ffmpeg 后处理</text>
 
   <!-- Feishu -->
   <rect x="770" y="180" width="165" height="140" rx="20" fill="#fff" filter="url(#shadow)"/>
@@ -101,7 +102,7 @@
   <path d="M 550 111 L 852 111 L 852 180" stroke="#94A3B8" stroke-width="2" fill="none" marker-end="url(#arr)"/>
 
   <!-- ===== Infrastructure Layer ===== -->
-  <text x="480" y="358" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#94A3B8" letter-spacing="3">— 基础设施 —</text>
+  <text x="480" y="358" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#94A3B8" letter-spacing="1">— 基础设施 —</text>
 
   <!-- CLI Commands -->
   <rect x="30" y="378" width="205" height="85" rx="16" fill="#fff" filter="url(#shadow-sm)"/>
@@ -151,7 +152,7 @@
   <path d="M 852 320 L 852 355 L 820 355 L 820 378" stroke="#CBD5E1" stroke-width="1.5" fill="none" marker-end="url(#arr-dark)" stroke-dasharray="4,3"/>
 
   <!-- ===== API Layer ===== -->
-  <text x="480" y="498" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#94A3B8" letter-spacing="3">— API 服务 —</text>
+  <text x="480" y="498" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#94A3B8" letter-spacing="1">— API 服务 —</text>
 
   <!-- MiniMax API -->
   <rect x="60" y="510" width="260" height="100" rx="18" fill="url(#g-blue)" filter="url(#shadow)"/>
