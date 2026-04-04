@@ -2,9 +2,10 @@
 """Send local image to Feishu user or chat"""
 import sys, requests, json, os
 
-APP_ID = "REDACTED_APP_ID"
-APP_SECRET = "REDACTED_APP_SECRET"
-CHAT_ID = "REDACTED_CHAT_ID_1"
+# === 核心配置区（从环境变量读取，敏感信息切勿硬编码） ===
+APP_ID = os.environ.get("FEISHU_APP_ID", "")
+APP_SECRET = os.environ.get("FEISHU_APP_SECRET", "")
+CHAT_ID = os.environ.get("FEISHU_CHAT_ID", "")
 
 def send_local_image(file_path, to_user=None, to_chat=None):
     # Get token

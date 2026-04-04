@@ -3,10 +3,10 @@ import requests
 import json
 import os
 
-# === 核心配置区 ===
-APP_ID = "REDACTED_APP_ID"
-APP_SECRET = "REDACTED_APP_SECRET"  # 飞书机器人的 Secret
-CHAT_ID = "REDACTED_CHAT_ID_2" # 你的专属对话框 ID
+# === 核心配置区（从环境变量读取，敏感信息切勿硬编码） ===
+APP_ID = os.environ.get("FEISHU_APP_ID", "")
+APP_SECRET = os.environ.get("FEISHU_APP_SECRET", "")
+CHAT_ID = os.environ.get("FEISHU_CHAT_ID", "")
 
 def send_video_as_file(file_path):
     if not os.path.exists(file_path):
