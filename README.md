@@ -167,25 +167,39 @@ minimax-toolkit/
 ├── .gitignore                 # Git 忽略配置
 ├── docs/
 │   └── architecture.svg      # 系统架构图
-└── scripts/
-    ├── toolkit.py             # 统一 CLI 入口
-    ├── setup.sh               # 首次配置引导
-    ├── check.sh               # 诊断检查
-    ├── test_env.py            # 环境测试
-    ├── test_features.py       # 功能测试
-    ├── lib/
-    │   ├── common.sh          # 共享函数（load_env, check_api_key）
-    │   └── diagnose.sh        # 诊断函数库
-    ├── tts.py / tts/          # 语音合成
-    ├── image_generate.py / image/  # 图片生成
-    ├── music/                 # 音乐生成
-    ├── video/                 # 视频生成
-    └── install-mcporter.sh    # mcporter 安装
+├── scripts/
+│   ├── toolkit.py             # 统一 CLI 入口
+│   ├── setup.sh               # 首次配置引导
+│   ├── check.sh               # 诊断检查
+│   ├── test_env.py            # 环境测试
+│   ├── test_features.py       # 功能测试
+│   ├── lib/
+│   │   ├── common.sh          # 共享函数（load_env, check_api_key）
+│   │   ├── diagnose.sh        # 诊断函数库
+│   │   └── feishu.py         # 飞书 API 共享库（FeishuAPI 类）
+│   ├── tts.py / tts/          # 语音合成
+│   ├── image_generate.py / image/  # 图片生成
+│   ├── music/                 # 音乐生成
+│   ├── video/                 # 视频生成
+│   └── install-mcporter.sh    # mcporter 安装
+└── send_feishu_*.py           # 飞书消息发送工具（独立脚本）
+    ├── send_feishu_audio.py   # 发送音频（原生语音 or 文件形式）
+    ├── send_feishu_image.py    # 发送图片
+    ├── send_feishu_video.py    # 发送视频（文件形式）
+    └── send_feishu_native_video.py  # 发送视频（原生气泡，含封面）
 ```
 
 ---
 
 ## 更新日志
+
+### v1.5.1 (2026-04-04)
+
+**重构：**
+- 🔧 **飞书发送脚本重构**：统一使用 `scripts/lib/feishu.py` 共享库（FeishuAPI 类）
+- 🔧 **错误处理修复**：`send_feishu_audio.py` 不再虚假打印"发送成功"
+- 🔧 **合并冗余**：`send_feishu_image_local.py` 合并至 `send_feishu_image.py`
+- 🔧 **视频脚本修复**：封面上传失败时正确中断，不再虚假继续
 
 ### v1.5.0 (2026-04-04)
 
