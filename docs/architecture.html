@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MiniMax Toolkit — 系统架构图</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0f1419;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: #e8eaed;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+  }
+  h1 {
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: #8ab4f8;
+    margin-bottom: 8px;
+    letter-spacing: 0.02em;
+  }
+  .subtitle {
+    font-size: 0.85rem;
+    color: #9aa0a6;
+    margin-bottom: 32px;
+  }
+  svg {
+    filter: drop-shadow(0 4px 24px rgba(0,0,0,0.5));
+  }
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px 32px;
+    margin-top: 28px;
+    justify-content: center;
+    max-width: 900px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.78rem;
+    color: #bdc1c6;
+  }
+  .legend-swatch {
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+  .legend-line {
+    width: 28px;
+    height: 2px;
+    border-radius: 1px;
+  }
+  footer {
+    margin-top: 32px;
+    font-size: 0.72rem;
+    color: #5f6368;
+  }
+</style>
+</head>
+<body>
+
+<h1>MiniMax Toolkit — 系统架构</h1>
+<p class="subtitle">MiniMax 多模态能力工具包 · OpenClaw 原生</p>
+
+<svg width="900" height="720" viewBox="0 0 900 720" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="grad-cli" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#8ab4f8;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#669df6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="grad-cmd" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#81c995;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#5d9b68;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="grad-api" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f28b82;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#e0695a;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="grad-mcp" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#c58af9;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#9b59d0;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="grad-script" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fcc934;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f9ab00;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="grad-feishu" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#34aadc;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1a7cb5;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="grad-env" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#62727a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#485359;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="grad-output" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3d4a53;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2d363d;stop-opacity:1" />
+    </linearGradient>
+
+    <!-- Arrow marker -->
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#5f6368"/>
+    </marker>
+    <marker id="arrow-blue" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#8ab4f8"/>
+    </marker>
+
+    <!-- Drop shadow filter -->
+    <filter id="shadow" x="-10%" y="-10%" width="130%" height="140%">
+      <feDropShadow dx="0" dy="3" stdDeviation="6" flood-color="rgba(0,0,0,0.45)"/>
+    </filter>
+    <filter id="shadow-sm" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="rgba(0,0,0,0.35)"/>
+    </filter>
+  </defs>
+
+  <!-- ===== Layer Labels (left side) ===== -->
+  <!-- User Layer -->
+  <rect x="20" y="50" width="6" height="60" rx="3" fill="#8ab4f8" opacity="0.7"/>
+  <text x="34" y="78" font-size="11" fill="#8ab4f8" font-weight="600">用户层</text>
+  <text x="34" y="94" font-size="9.5" fill="#9aa0a6">User Input</text>
+
+  <!-- CLI Layer -->
+  <rect x="20" y="130" width="6" height="60" rx="3" fill="#81c995" opacity="0.7"/>
+  <text x="34" y="158" font-size="11" fill="#81c995" font-weight="600">入口层</text>
+  <text x="34" y="174" font-size="9.5" fill="#9aa0a6">CLI / Agent</text>
+
+  <!-- Commands Layer -->
+  <rect x="20" y="210" width="6" height="180" rx="3" fill="#fcc934" opacity="0.7"/>
+  <text x="34" y="248" font-size="11" fill="#fcc934" font-weight="600">命令层</text>
+  <text x="34" y="264" font-size="9.5" fill="#9aa0a6">Commands</text>
+  <text x="34" y="278" font-size="9.5" fill="#9aa0a6">Shell Scripts</text>
+  <text x="34" y="292" font-size="9.5" fill="#9aa0a6">Python Libs</text>
+
+  <!-- API Layer -->
+  <rect x="20" y="410" width="6" height="160" rx="3" fill="#f28b82" opacity="0.7"/>
+  <text x="34" y="448" font-size="11" fill="#f28b82" font-weight="600">API 层</text>
+  <text x="34" y="464" font-size="9.5" fill="#9aa0a6">MiniMax API</text>
+  <text x="34" y="478" font-size="9.5" fill="#9aa0a6">Feishu API</text>
+  <text x="34" y="492" font-size="9.5" fill="#9aa0a6">mcporter MCP</text>
+
+  <!-- External Layer -->
+  <rect x="20" y="590" width="6" height="80" rx="3" fill="#c58af9" opacity="0.7"/>
+  <text x="34" y="618" font-size="11" fill="#c58af9" font-weight="600">外部服务</text>
+  <text x="34" y="634" font-size="9.5" fill="#9aa0a6">Internet</text>
+
+  <!-- ===== MAIN ENTRY: toolkit.py =====
+       Center: toolkit.py (CLI Entry) -->
+  <rect x="300" y="50" width="300" height="70" rx="16" fill="url(#grad-cli)" filter="url(#shadow)"/>
+  <text x="450" y="77" text-anchor="middle" font-size="15" font-weight="700" fill="#fff">toolkit.py</text>
+  <text x="450" y="97" text-anchor="middle" font-size="10.5" fill="rgba(255,255,255,0.8)">Unified CLI 统一入口</text>
+
+  <!-- ===== COMMAND BLOCKS (row of 5 boxes below entry) ===== -->
+  <!-- setup -->
+  <rect x="80" y="175" width="120" height="58" rx="12" fill="url(#grad-cmd)" filter="url(#shadow-sm)"/>
+  <text x="140" y="201" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">setup</text>
+  <text x="140" y="217" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.75)">首次配置向导</text>
+
+  <!-- check -->
+  <rect x="225" y="175" width="120" height="58" rx="12" fill="url(#grad-cmd)" filter="url(#shadow-sm)"/>
+  <text x="285" y="201" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">check</text>
+  <text x="285" y="217" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.75)">诊断检查</text>
+
+  <!-- doctor -->
+  <rect x="370" y="175" width="120" height="58" rx="12" fill="url(#grad-cmd)" filter="url(#shadow-sm)"/>
+  <text x="430" y="201" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">doctor</text>
+  <text x="430" y="217" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.75)">环境修复</text>
+
+  <!-- env -->
+  <rect x="515" y="175" width="120" height="58" rx="12" fill="url(#grad-cmd)" filter="url(#shadow-sm)"/>
+  <text x="575" y="201" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">env</text>
+  <text x="575" y="217" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.75)">环境变量管理</text>
+
+  <!-- feishu -->
+  <rect x="660" y="175" width="120" height="58" rx="12" fill="url(#grad-cmd)" filter="url(#shadow-sm)"/>
+  <text x="720" y="201" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">feishu</text>
+  <text x="720" y="217" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.75)">飞书群管理</text>
+
+  <!-- ===== ARROWS: toolkit.py -> commands =====
+       Lines from bottom of main box to top of command boxes -->
+  <!-- Arrow to setup (140, 120) -> (140, 233) -->
+  <path d="M 340 120 L 140 120 L 140 175" stroke="#81c995" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+  <!-- Arrow to check -->
+  <path d="M 360 120 L 285 120 L 285 175" stroke="#81c995" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+  <!-- Arrow to doctor -->
+  <path d="M 430 120 L 430 120 L 430 175" stroke="#81c995" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+  <!-- Arrow to env -->
+  <path d="M 470 120 L 575 120 L 575 175" stroke="#81c995" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+  <!-- Arrow to feishu -->
+  <path d="M 490 120 L 720 120 L 720 175" stroke="#81c995" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+
+  <!-- ===== GENERATION COMMANDS (middle row) ===== -->
+  <!-- tts -->
+  <rect x="80" y="310" width="160" height="58" rx="12" fill="url(#grad-script)" filter="url(#shadow-sm)"/>
+  <text x="160" y="336" text-anchor="middle" font-size="12" font-weight="700" fill="#2d1f00">tts</text>
+  <text x="160" y="352" text-anchor="middle" font-size="9" fill="#6b5000">语音合成 · speech-2.8-hd</text>
+
+  <!-- image -->
+  <rect x="265" y="310" width="160" height="58" rx="12" fill="url(#grad-script)" filter="url(#shadow-sm)"/>
+  <text x="345" y="336" text-anchor="middle" font-size="12" font-weight="700" fill="#2d1f00">image</text>
+  <text x="345" y="352" text-anchor="middle" font-size="9" fill="#6b5000">图片生成 · image-01</text>
+
+  <!-- music -->
+  <rect x="450" y="310" width="160" height="58" rx="12" fill="url(#grad-script)" filter="url(#shadow-sm)"/>
+  <text x="530" y="336" text-anchor="middle" font-size="12" font-weight="700" fill="#2d1f00">music</text>
+  <text x="530" y="352" text-anchor="middle" font-size="9" fill="#6b5000">音乐生成 · music-2.5</text>
+
+  <!-- video -->
+  <rect x="635" y="310" width="160" height="58" rx="12" fill="url(#grad-script)" filter="url(#shadow-sm)"/>
+  <text x="715" y="336" text-anchor="middle" font-size="12" font-weight="700" fill="#2d1f00">video</text>
+  <text x="715" y="352" text-anchor="middle" font-size="9" fill="#6b5000">视频生成 · Hailuo-2.3</text>
+
+  <!-- Arrows: commands row down to generation commands -->
+  <!-- tts -> -->
+  <path d="M 140 233 L 140 265 L 160 265 L 160 310" stroke="#fcc934" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+  <!-- check -> tts -->
+  <path d="M 285 233 L 285 265 L 160 265 L 160 310" stroke="#fcc934" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+  <!-- doctor -> image -->
+  <path d="M 430 233 L 430 265 L 345 265 L 345 310" stroke="#fcc934" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+  <!-- env -> music -->
+  <path d="M 575 233 L 575 265 L 530 265 L 530 310" stroke="#fcc934" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+  <!-- feishu -> video -->
+  <path d="M 720 233 L 720 265 L 715 265 L 715 310" stroke="#fcc934" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+
+  <!-- ===== SCRIPT BLOCKS ===== -->
+  <!-- tts scripts -->
+  <rect x="80" y="390" width="155" height="50" rx="10" fill="#2a2f36" filter="url(#shadow-sm)" stroke="#fcc934" stroke-width="1.5"/>
+  <text x="157" y="411" text-anchor="middle" font-size="10" font-weight="600" fill="#fcc934">tts.py</text>
+  <text x="157" y="427" text-anchor="middle" font-size="8.5" fill="#9aa0a6">scripts/tts/</text>
+
+  <!-- image scripts -->
+  <rect x="265" y="390" width="155" height="50" rx="10" fill="#2a2f36" filter="url(#shadow-sm)" stroke="#fcc934" stroke-width="1.5"/>
+  <text x="342" y="411" text-anchor="middle" font-size="10" font-weight="600" fill="#fcc934">image_generate.py</text>
+  <text x="342" y="427" text-anchor="middle" font-size="8.5" fill="#9aa0a6">scripts/image/</text>
+
+  <!-- music scripts -->
+  <rect x="450" y="390" width="155" height="50" rx="10" fill="#2a2f36" filter="url(#shadow-sm)" stroke="#fcc934" stroke-width="1.5"/>
+  <text x="527" y="411" text-anchor="middle" font-size="10" font-weight="600" fill="#fcc934">music/</text>
+  <text x="527" y="427" text-anchor="middle" font-size="8.5" fill="#9aa0a6">generate_music.sh</text>
+
+  <!-- video scripts -->
+  <rect x="635" y="390" width="155" height="50" rx="10" fill="#2a2f36" filter="url(#shadow-sm)" stroke="#fcc934" stroke-width="1.5"/>
+  <text x="712" y="411" text-anchor="middle" font-size="10" font-weight="600" fill="#fcc934">video/</text>
+  <text x="712" y="427" text-anchor="middle" font-size="8.5" fill="#9aa0a6">generate_video.sh</text>
+
+  <!-- feishu scripts -->
+  <rect x="80" y="390" width="0" height="0" rx="0" fill="none"/>
+
+  <!-- Arrows: generation -> scripts -->
+  <path d="M 160 368 L 160 390" stroke="#fcc934" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+  <path d="M 345 368 L 342 390" stroke="#fcc934" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+  <path d="M 530 368 L 527 390" stroke="#fcc934" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+  <path d="M 715 368 L 712 390" stroke="#fcc934" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+
+  <!-- ===== API BOXES ===== -->
+  <!-- MiniMax API -->
+  <rect x="130" y="470" width="200" height="80" rx="14" fill="url(#grad-api)" filter="url(#shadow)"/>
+  <text x="230" y="497" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">MiniMax API</text>
+  <text x="230" y="516" text-anchor="middle" font-size="9.5" fill="rgba(255,255,255,0.8)">api.minimaxi.com</text>
+  <text x="230" y="533" text-anchor="middle" font-size="8.5" fill="rgba(255,255,255,0.7)">TTS · Image · Music · Video</text>
+
+  <!-- Feishu API -->
+  <rect x="400" y="470" width="200" height="80" rx="14" fill="url(#grad-feishu)" filter="url(#shadow)"/>
+  <text x="500" y="497" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">Feishu API</text>
+  <text x="500" y="516" text-anchor="middle" font-size="9.5" fill="rgba(255,255,255,0.8)">open.feishu.cn</text>
+  <text x="500" y="533" text-anchor="middle" font-size="8.5" fill="rgba(255,255,255,0.7)">消息 · 群聊 · 文件发送</text>
+
+  <!-- mcporter / MCP -->
+  <rect x="670" y="470" width="200" height="80" rx="14" fill="url(#grad-mcp)" filter="url(#shadow)"/>
+  <text x="770" y="497" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">mcporter MCP</text>
+  <text x="770" y="516" text-anchor="middle" font-size="9.5" fill="rgba(255,255,255,0.8)">minimax-coding-plan-mcp</text>
+  <text x="770" y="533" text-anchor="middle" font-size="8.5" fill="rgba(255,255,255,0.7)">图片理解 · 联网搜索</text>
+
+  <!-- Arrows: scripts -> APIs -->
+  <path d="M 157 440 L 157 470" stroke="#f28b82" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+  <path d="M 342 440 L 280 470" stroke="#f28b82" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+  <path d="M 527 440 L 490 470" stroke="#f28b82" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+  <path d="M 712 440 L 750 470" stroke="#c58af9" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+
+  <!-- feishu -> Feishu API -->
+  <path d="M 720 233 L 720 260 L 500 260 L 500 470" stroke="#34aadc" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+
+  <!-- ===== CONFIG & OUTPUT ===== -->
+  <!-- .env config -->
+  <rect x="80" y="575" width="160" height="55" rx="10" fill="url(#grad-env)" filter="url(#shadow-sm)"/>
+  <text x="160" y="597" text-anchor="middle" font-size="12" font-weight="700" fill="#e8eaed">.env</text>
+  <text x="160" y="614" text-anchor="middle" font-size="9" fill="#9aa0a6">MINIMAX_API_KEY</text>
+
+  <!-- minimax-output -->
+  <rect x="265" y="575" width="160" height="55" rx="10" fill="url(#grad-output)" filter="url(#shadow-sm)" stroke="#3d4a53" stroke-width="1.5"/>
+  <text x="345" y="597" text-anchor="middle" font-size="12" font-weight="700" fill="#bdc1c6">minimax-output/</text>
+  <text x="345" y="614" text-anchor="middle" font-size="9" fill="#9aa0a6">tts · image · music · video</text>
+
+  <!-- mcporter config -->
+  <rect x="450" y="575" width="160" height="55" rx="10" fill="url(#grad-mcp)" opacity="0.85" filter="url(#shadow-sm)"/>
+  <text x="530" y="597" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">mcporter.json</text>
+  <text x="530" y="614" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.8)">MCP Server 配置</text>
+
+  <!-- Arrows: config to scripts/APIs -->
+  <path d="M 160 545 L 160 565 L 157 565" stroke="#62727a" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+  <path d="M 345 545 L 345 565 L 342 565" stroke="#62727a" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+  <path d="M 530 545 L 530 565 L 527 565" stroke="#62727a" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+
+  <!-- MiniMax API -> output dir -->
+  <path d="M 230 550 L 230 575" stroke="#f28b82" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+
+  <!-- ===== Legend ===== -->
+  <rect x="60" y="660" width="780" height="50" rx="10" fill="#1c2126" opacity="0.9"/>
+
+  <!-- Legend items -->
+  <rect x="85" y="676" width="13" height="13" rx="3" fill="#8ab4f8"/>
+  <text x="105" y="687" font-size="10" fill="#bdc1c6">CLI 入口</text>
+
+  <rect x="175" y="676" width="13" height="13" rx="3" fill="#81c995"/>
+  <text x="195" y="687" font-size="10" fill="#bdc1c6">管理命令</text>
+
+  <rect x="270" y="676" width="13" height="13" rx="3" fill="#fcc934"/>
+  <text x="290" y="687" font-size="10" fill="#bdc1c6">生成命令</text>
+
+  <rect x="375" y="676" width="13" height="13" rx="3" fill="#f28b82"/>
+  <text x="395" y="687" font-size="10" fill="#bdc1c6">MiniMax API</text>
+
+  <rect x="485" y="676" width="13" height="13" rx="3" fill="#34aadc"/>
+  <text x="505" y="687" font-size="10" fill="#bdc1c6">Feishu API</text>
+
+  <rect x="580" y="676" width="13" height="13" rx="3" fill="#c58af9"/>
+  <text x="600" y="687" font-size="10" fill="#bdc1c6">mcporter MCP</text>
+
+  <rect x="690" y="676" width="13" height="13" rx="3" fill="#62727a"/>
+  <text x="710" y="687" font-size="10" fill="#bdc1c6">配置文件</text>
+
+  <!-- Arrow in legend -->
+  <line x1="785" y1="682" x2="815" y2="682" stroke="#5f6368" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="825" y="687" font-size="10" fill="#bdc1c6">数据流</text>
+
+</svg>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-swatch" style="background:#8ab4f8"></div>CLI 入口层 (toolkit.py)</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#81c995"></div>管理命令 (setup/check/doctor/env/feishu)</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#fcc934"></div>生成命令 (tts/image/music/video)</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#f28b82"></div>MiniMax API</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#34aadc"></div>Feishu API</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#c58af9"></div>mcporter MCP</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#62727a"></div>配置文件 (.env / mcporter.json)</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#3d4a53"></div>输出目录 (minimax-output/)</div>
+</div>
+
+<footer>
+  MiniMax Toolkit · github.com/victor0602/minimax-toolkit · OpenClaw Native
+</footer>
+
+</body>
+</html>
