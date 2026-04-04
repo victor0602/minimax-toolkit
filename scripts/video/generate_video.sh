@@ -11,6 +11,10 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
+# Source shared common functions
+# shellcheck source=lib/common.sh
+source "$(dirname "${BASH_SOURCE[0]}")/../lib/common.sh"
+
 API_BASE="${MINIMAX_API_HOST:-https://api.minimaxi.com}/v1"
 POLL_INTERVAL=10
 MAX_WAIT_TIME=600
@@ -20,30 +24,6 @@ MAX_CONSECUTIVE_FAILURES=5
 # ============================================================================
 # Common functions
 # ============================================================================
-
-load_env() {
-  local env_file
-  for env_file in "$PROJECT_ROOT/.env" "$(pwd)/.env"; do
-    if [[ -f "$env_file" ]]; then
-      while IFS= read -r line || [[ -n "$line" ]]; do
-        line="${line%%#*}"; line="$(echo "$line" | xargs)"
-        [[ -z "$line" || "$line" != *=* ]] && continue
-        local key="${line%%=*}" val="${line#*=}"
-        key="$(echo "$key" | xargs)"; val="$(echo "$val" | xargs)"
-        if [[ ${#val} -ge 2 ]]; then
-          case "$val" in \"*\") val="${val:1:${#val}-2}" ;; \'*\') val="${val:1:${#val}-2}" ;; esac
-        fi
-        [[ -z "${!key:-}" ]] && export "$key=$val"
-      done < "$env_file"
-    fi
-  done
-}
-
-check_api_key() {
-  if [[ -z "${MINIMAX_API_KEY:-}" ]]; then
-    echo "Error: MINIMAX_API_KEY environment variable is not set." >&2; exit 1
-  fi
-}
 
 image_to_data_url() {
   local path="$1"
@@ -123,6 +103,14 @@ poll_task() {
       --max-time "$REQUEST_TIMEOUT" 2>/dev/null)"; then
       http_code="${raw_output##*$'\n'}"
       response="${raw_output%$'\n'*}"
+      if [[ "$http_code" -ge 400 ]] 2>/dev/null; then
+        consecutive_failures=$((consecutive_failures + 1))
+        echo "  Poll HTTP error $http_code ($consecutive_failures/$MAX_CONSECUTIVE_FAILURES)" >&2
+        if [[ $consecutive_failures -ge $MAX_CONSECUTIVE_FAILURES ]]; then
+          echo "Error: Too many consecutive poll failures" >&2; exit 1
+        fi
+        sleep "$POLL_INTERVAL"; continue
+      fi
       consecutive_failures=0
     else
       consecutive_failures=$((consecutive_failures + 1))
@@ -178,9 +166,14 @@ download_video() {
 
   echo "Downloading video..." >&2
   mkdir -p "$(dirname "$output_path")"
-  curl -s -o "$output_path" --max-time $((REQUEST_TIMEOUT * 3)) "$dl_url"
+  local dl_http_code
+  dl_http_code="$(curl -s -o "$output_path" -w "%{http_code}" --max-time $((REQUEST_TIMEOUT * 3)) "$dl_url")"
   local size
   size="$(wc -c < "$output_path" | tr -d ' ')"
+  if [[ "$size" -eq 0 || "$dl_http_code" -ge 400 ]]; then
+    echo "Error: Download failed (HTTP $dl_http_code, size=$size bytes)" >&2
+    exit 1
+  fi
   echo "Video saved to: $output_path ($size bytes)" >&2
 }
 

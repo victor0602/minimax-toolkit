@@ -14,13 +14,36 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 SKILL_SCRIPT = os.path.join(SCRIPT_DIR, "image", "generate_image.sh")
 
 
+def load_env():
+    """Load .env file from project root or current directory."""
+    project_root = os.path.dirname(os.path.abspath(__file__))
+    for env_file in [os.path.join(project_root, ".env"), os.path.join(os.getcwd(), ".env")]:
+        if os.path.isfile(env_file):
+            with open(env_file) as f:
+                for line in f:
+                    line = line.strip()
+                    if not line or line.startswith("#") or "=" not in line:
+                        continue
+                    key, _, value = line.partition("=")
+                    key = key.strip()
+                    value = value.strip()
+                    if len(value) >= 2:
+                        if (value.startswith('"') and value.endswith('"')) or \
+                           (value.startswith("'") and value.endswith("'")):
+                            value = value[1:-1]
+                    if not os.environ.get(key):
+                        os.environ[key] = value
+            return
+
+
 def generate_image(prompt, output="minimax-output/image.png", **kwargs):
+    load_env()
     os.makedirs(os.path.dirname(os.path.abspath(output)) if os.path.dirname(output) else "minimax-output", exist_ok=True)
 
     cmd = ["bash", SKILL_SCRIPT, "--prompt", prompt, "-o", output]
     for k, v in kwargs.items():
         if v is not None:
-            cmd.extend([f"--{k}", str(v)])
+            cmd.extend([f"--{k.replace('_', '-')}", str(v)])
 
     env = os.environ.copy()
     if not env.get("MINIMAX_API_KEY"):

@@ -19,47 +19,13 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
+# Source shared common functions
+# shellcheck source=lib/common.sh
+source "$(dirname "${BASH_SOURCE[0]}")/../lib/common.sh"
+
 # ============================================================================
 # Common functions
 # ============================================================================
-
-load_env() {
-  local env_file
-  for env_file in "$PROJECT_ROOT/.env" "$(pwd)/.env"; do
-    if [[ -f "$env_file" ]]; then
-      while IFS= read -r line || [[ -n "$line" ]]; do
-        line="${line%%#*}"              # strip comments
-        line="$(echo "$line" | xargs)"  # trim whitespace
-        [[ -z "$line" || "$line" != *=* ]] && continue
-        local key="${line%%=*}"
-        local val="${line#*=}"
-        key="$(echo "$key" | xargs)"
-        val="$(echo "$val" | xargs)"
-        # Remove surrounding quotes
-        if [[ ${#val} -ge 2 ]]; then
-          case "$val" in
-            \"*\") val="${val:1:${#val}-2}" ;;
-            \'*\') val="${val:1:${#val}-2}" ;;
-          esac
-        fi
-        # Only set if not already in environment
-        if [[ -z "${!key:-}" ]]; then
-          export "$key=$val"
-        fi
-      done < "$env_file"
-      return 0
-    fi
-  done
-  return 0
-}
-
-check_api_key() {
-  if [[ -z "${MINIMAX_API_KEY:-}" ]]; then
-    echo "Error: MINIMAX_API_KEY environment variable is not set" >&2
-    echo "  export MINIMAX_API_KEY='your-key'" >&2
-    exit 1
-  fi
-}
 
 ensure_dir() {
   local dir="$1"
@@ -399,29 +365,21 @@ cmd_list_voices() {
   echo ""
   echo "=== Custom Voices ==="
 
-  local clone_response design_response
-  clone_response="$(api_request POST voice/list '{"voice_type":"voice_cloning"}' 2>/dev/null)" || true
-  design_response="$(api_request POST voice/list '{"voice_type":"voice_generation"}' 2>/dev/null)" || true
+  # Fetch all custom voice types in one request
+  local custom_response
+  custom_response="$(api_request POST voice/list '{"voice_type":"custom"}' 2>/dev/null)" || \
+    custom_response="$(api_request POST voice/list '{"voice_type":"voice_cloning"}' 2>/dev/null)" || \
+    custom_response="$(api_request POST voice/list '{"voice_type":"voice_generation"}' 2>/dev/null)" || true
 
   local has_custom=false
 
-  if [[ -n "$clone_response" ]]; then
+  if [[ -n "$custom_response" ]]; then
     local cc
-    cc="$(echo "$clone_response" | jq '.voice_list | length')" 2>/dev/null || cc=0
+    cc="$(echo "$custom_response" | jq '.voice_list | length')" 2>/dev/null || cc=0
     if [[ "$cc" -gt 0 ]]; then
       has_custom=true
-      echo "Cloned ($cc):"
-      echo "$clone_response" | jq -r '.voice_list[] | "  \(.voice_id)"'
-    fi
-  fi
-
-  if [[ -n "$design_response" ]]; then
-    local dc
-    dc="$(echo "$design_response" | jq '.voice_list | length')" 2>/dev/null || dc=0
-    if [[ "$dc" -gt 0 ]]; then
-      has_custom=true
-      echo "Designed ($dc):"
-      echo "$design_response" | jq -r '.voice_list[] | "  \(.voice_id)"'
+      echo "Custom voices ($cc):"
+      echo "$custom_response" | jq -r '.voice_list[] | "  \(.voice_id)"'
     fi
   fi
 

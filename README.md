@@ -61,6 +61,24 @@ clawhub install minimax-toolkit --workdir ~/.openclaw/workspace --dir skills
 
 ## 更新日志
 
+### v1.4.0 (2026-04-04)
+
+**Bug 修复：**
+- 🐛 **tts.py fallback 修复**：fallback 直接调 API 时无法读取 `.env` 的问题，添加 `load_env()` 解决
+- 🐛 **图片生成参数映射修复**：`image_generate.py` 的 Python 参数（下划线）现在正确转换为 shell flag（连字符）
+- 🐛 **视频下载完整性验证**：下载后验证 HTTP status 和文件大小，防止静默失败
+- 🐛 **poll 失败计数修复**：HTTP 4xx 响应正确计入重试次数，不再被忽略
+
+**代码优化：**
+- ♻️ **抽取共享库**：`load_env()` / `check_api_key()` 抽取为 `scripts/lib/common.sh`，消除四份重复代码
+- ⚡ **list-voices 优化**：合并重复 API 请求，从两次减少为一次
+- 🔒 **install-mcporter.sh 增强**：Python 读取环境变量增加校验，缺失时主动报错而非静默崩溃
+
+**行为变更：**
+- ⚠️ **图片下载默认行为调整**：`generate_image.sh` 下载默认关闭，需显式 `--download` flag，与音乐脚本行为一致
+
+---
+
 ### v1.3.0 (2026-03-29)
 
 **问题修复：**
@@ -178,10 +196,12 @@ minimax-toolkit/
 ├── .env.example            # 环境变量模板
 ├── .gitignore              # Git 忽略配置
 └── scripts/
-    ├── install-mcporter.sh  # mcporter 一键安装脚本
-    ├── tts.py             # 语音合成入口
+    ├── lib/
+    │   └── common.sh       # 共享函数库（load_env, check_api_key）
+    ├── install-mcporter.sh # mcporter 一键安装脚本
+    ├── tts.py              # 语音合成入口
     ├── tts/generate_voice.sh
-    ├── image_generate.py   # 图片生成入口
+    ├── image_generate.py    # 图片生成入口
     ├── image/generate_image.sh
     ├── music/generate_music.sh
     └── video/

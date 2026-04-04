@@ -10,33 +10,13 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
+# Source shared common functions
+# shellcheck source=lib/common.sh
+source "$(dirname "${BASH_SOURCE[0]}")/../lib/common.sh"
+
 # ============================================================================
 # Common functions
 # ============================================================================
-
-load_env() {
-  local env_file
-  for env_file in "$PROJECT_ROOT/.env" "$(pwd)/.env"; do
-    if [[ -f "$env_file" ]]; then
-      while IFS= read -r line || [[ -n "$line" ]]; do
-        line="${line%%#*}"; line="$(echo "$line" | xargs)"
-        [[ -z "$line" || "$line" != *=* ]] && continue
-        local key="${line%%=*}" val="${line#*=}"
-        key="$(echo "$key" | xargs)"; val="$(echo "$val" | xargs)"
-        if [[ ${#val} -ge 2 ]]; then
-          case "$val" in \"*\") val="${val:1:${#val}-2}" ;; \'*\') val="${val:1:${#val}-2}" ;; esac
-        fi
-        [[ -z "${!key:-}" ]] && export "$key=$val"
-      done < "$env_file"
-    fi
-  done
-}
-
-check_api_key() {
-  if [[ -z "${MINIMAX_API_KEY:-}" ]]; then
-    echo "Error: MINIMAX_API_KEY environment variable is not set." >&2; exit 1
-  fi
-}
 
 image_to_data_url() {
   local path="$1"
@@ -70,7 +50,7 @@ main() {
   local response_format="url" n=1 seed=""
   local prompt_optimizer=false aigc_watermark=false
   local ref_image=""
-  local output="" download=true
+  local output="" download=false
 
   while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -86,6 +66,7 @@ main() {
       --aigc-watermark) aigc_watermark=true; shift ;;
       --ref-image) ref_image="$2"; shift 2 ;;
       --no-download) download=false; shift ;;
+      --download) download=true; shift ;;
       -o|--output) output="$2"; shift 2 ;;
       -h|--help)
         cat <<'USAGE'
@@ -110,12 +91,13 @@ Options:
   --aigc-watermark      Add AIGC watermark to generated images
   --ref-image FILE      Character reference image (local file or URL, i2i mode)
   --response-format FMT Response format: url (default), base64
-  --no-download         Don't download, just print URL(s)
-  -o, --output FILE     Output file path (required)
+  --download           Download image file (default: false, just print URL)
+  --no-download        Don't download, just print URL(s)
+  -o, --output FILE    Output file path (required)
 
 Examples:
-  # Text-to-image (default)
-  generate_image.sh --prompt "A cat on a rooftop at sunset, cinematic" -o cat.png
+  # Text-to-image (default: URL only, use --download to save)
+  generate_image.sh --prompt "A cat on a rooftop at sunset, cinematic" -o cat.png --download
 
   # Custom aspect ratio
   generate_image.sh --prompt "Mountain landscape" --aspect-ratio 16:9 -o landscape.png

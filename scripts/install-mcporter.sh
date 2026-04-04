@@ -96,9 +96,14 @@ if [ -f "$MCPORTER_CONFIG_FILE" ]; then
 import json
 import os
 
-config_path = os.path.expanduser(os.environ['MCPORTER_CONFIG_FILE'])
-api_key = os.environ['MINIMAX_API_KEY']
-package = os.environ['MINIMAX_PACKAGE']
+config_path = os.environ.get('MCPORTER_CONFIG_FILE', '')
+if not config_path:
+    raise RuntimeError('MCPORTER_CONFIG_FILE not set')
+config_path = os.path.expanduser(config_path)
+api_key = os.environ.get('MINIMAX_API_KEY', '')
+package = os.environ.get('MINIMAX_PACKAGE', '')
+if not api_key or not package:
+    raise RuntimeError('MINIMAX_API_KEY or MINIMAX_PACKAGE not set')
 
 with open(config_path, 'r') as f:
     config = json.load(f)

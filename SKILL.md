@@ -108,8 +108,9 @@ ffmpeg -i minimax-output/output.mp3 -c:a libopus minimax-output/output.opus -y
 ### 基本用法
 ```bash
 cd ~/.openclaw/workspace
-python3 ~/.openclaw/workspace/skills/minimax-toolkit/scripts/image_generate.py "一张咖啡馆的照片" -o minimax-output/photo.png
+python3 ~/.openclaw/workspace/skills/minimax-toolkit/scripts/image_generate.py "一张咖啡馆的照片" -o minimax-output/photo.png --download
 ```
+> 注意：`--download` 需显式传入才会下载图片文件，默认为 URL 模式。
 
 **API 端点**：`POST https://api.minimaxi.com/v1/image_generation`
 

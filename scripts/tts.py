@@ -15,7 +15,30 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 SKILL_SCRIPT = os.path.join(SCRIPT_DIR, "tts", "generate_voice.sh")
 
 
+def load_env():
+    """Load .env file from project root or current directory."""
+    project_root = os.path.dirname(os.path.abspath(__file__))
+    for env_file in [os.path.join(project_root, ".env"), os.path.join(os.getcwd(), ".env")]:
+        if os.path.isfile(env_file):
+            with open(env_file) as f:
+                for line in f:
+                    line = line.strip()
+                    if not line or line.startswith("#") or "=" not in line:
+                        continue
+                    key, _, value = line.partition("=")
+                    key = key.strip()
+                    value = value.strip()
+                    if len(value) >= 2:
+                        if (value.startswith('"') and value.endswith('"')) or \
+                           (value.startswith("'") and value.endswith("'")):
+                            value = value[1:-1]
+                    if not os.environ.get(key):
+                        os.environ[key] = value
+            return
+
+
 def tts(text, voice="female-shaonv", output="minimax-output/output.mp3", verbose=False):
+    load_env()
     env = os.environ.copy()
     if not env.get("MINIMAX_API_KEY"):
         print("[Error] MINIMAX_API_KEY not set. Set it in environment or in your shell profile.", file=sys.stderr)
@@ -46,6 +69,7 @@ def tts(text, voice="female-shaonv", output="minimax-output/output.mp3", verbose
 
 
 def tts_direct_api(text, voice="female-shaonv", output="minimax-output/output.mp3", verbose=False):
+    load_env()
     import requests
 
     api_key = os.environ.get("MINIMAX_API_KEY")
