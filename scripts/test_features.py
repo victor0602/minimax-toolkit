@@ -3,6 +3,9 @@
 Feature integration tests for MiniMax Toolkit.
 Run: python3 scripts/test_features.py
 Requires: MINIMAX_API_KEY environment variable or .env file
+
+Note: Music and Video generation are async tasks that may take 30-120s+.
+If they time out, it is likely a server-side delay, not a test failure.
 """
 import sys
 import os
@@ -185,6 +188,9 @@ def test_music_generation():
         err = (data.get("base_resp") or {}).get("status_msg") or f"HTTP {resp.status_code}"
         print(f"  {FAIL} Music generation failed: {err}")
         return False
+    except requests.exceptions.Timeout:
+        print(f"  {SKIP} Music timed out (server may be slow, try again later)")
+        return None
     except Exception as e:
         print(f"  {FAIL} Music exception: {str(e)[:100]}")
         return False
