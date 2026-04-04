@@ -6,6 +6,7 @@ import sys, requests, json, os
 APP_ID = os.environ.get("FEISHU_APP_ID", "")
 APP_SECRET = os.environ.get("FEISHU_APP_SECRET", "")
 CHAT_ID = os.environ.get("FEISHU_CHAT_ID", "")
+DEFAULT_USER_ID = os.environ.get("FEISHU_DEFAULT_USER_ID", "")
 
 def send_local_image(file_path, to_user=None, to_chat=None):
     # Get token
@@ -50,5 +51,9 @@ if __name__ == "__main__":
         print("Usage: python send_feishu_image_local.py <file_path> [open_id]")
         sys.exit(1)
     file_path = sys.argv[1]
-    to_user = sys.argv[2] if len(sys.argv) > 2 else "ou_d11dbe6248e2f97cb43b272f6e918d55"
+    to_user = sys.argv[2] if len(sys.argv) > 2 else DEFAULT_USER_ID
+    if not to_user:
+        print("[Error] FEISHU_DEFAULT_USER_ID environment variable is not set.")
+        print("  Set it in your .env file or export FEISHU_DEFAULT_USER_ID=ou_xxx")
+        sys.exit(1)
     send_local_image(file_path, to_user=to_user)
