@@ -31,7 +31,7 @@ from pathlib import Path
 
 SCRIPT_DIR = Path(__file__).parent.resolve()
 PROJECT_ROOT = SCRIPT_DIR.parent
-WORKSPACE = Path.home() / ".openclaw" / "workspace"
+WORKSPACE = PROJECT_ROOT  # Use toolkit root instead of hardcoded ~/.openclaw/workspace
 
 VERSION = "1.4.0"
 

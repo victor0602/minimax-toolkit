@@ -10,8 +10,10 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m'
 
-# 配置
-MCPORTER_CONFIG_DIR="${HOME}/.openclaw/workspace/config"
+# 配置 - 使用环境变量或脚本所在目录的相对路径
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+MCPORTER_CONFIG_DIR="${OPENCLAW_CONFIG_DIR:-${PROJECT_ROOT}/config}"
 MCPORTER_CONFIG_FILE="${MCPORTER_CONFIG_DIR}/mcporter.json"
 MINIMAX_PACKAGE="minimax-coding-plan-mcp"
 

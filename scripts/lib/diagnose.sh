@@ -273,7 +273,7 @@ diag_check_video() {
 
 # mcporter — check CLI and MCP server status
 diag_check_mcporter() {
-  local cfg_file="${HOME}/.openclaw/workspace/config/mcporter.json"
+  local cfg_file="${OPENCLAW_CONFIG_DIR:-${PROJECT_ROOT}/config}/mcporter.json"
 
   if ! command -v mcporter &>/dev/null; then
     _json_status "mcporter" "missing" "reason" "mcporter CLI not installed"

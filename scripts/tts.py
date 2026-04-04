@@ -9,9 +9,9 @@ import json
 import subprocess
 import argparse
 
-USER_HOME = os.path.expanduser("~")
-WORKSPACE = os.path.join(USER_HOME, ".openclaw/workspace")
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.dirname(SCRIPT_DIR)
+WORKSPACE = PROJECT_ROOT  # Use toolkit root instead of hardcoded ~/.openclaw/workspace
 SKILL_SCRIPT = os.path.join(SCRIPT_DIR, "tts", "generate_voice.sh")
 
 
