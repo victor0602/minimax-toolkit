@@ -40,7 +40,7 @@ SCRIPT_DIR = Path(__file__).parent.resolve()
 PROJECT_ROOT = SCRIPT_DIR.parent
 WORKSPACE = PROJECT_ROOT  # Use toolkit root instead of hardcoded ~/.openclaw/workspace
 
-VERSION = "1.4.0"
+VERSION = "1.5.0"
 
 # ---------------------------------------------------------------------------
 # Error handling
@@ -422,13 +422,20 @@ def cmd_tts(args):
     require_api_key()
     output = args.output or str(PROJECT_ROOT / "minimax-output" / "output.mp3")
     os.makedirs(os.path.dirname(os.path.abspath(output)) if os.path.dirname(output) else "minimax-output", exist_ok=True)
-    run_bash(
-        SCRIPT_DIR / "tts.py",
-        "tts", args.text,
-        "-v", args.voice,
-        "-o", output,
-        check=True,
+    result = subprocess.run(
+        ["python3", str(SCRIPT_DIR / "tts.py"), "tts", args.text,
+         "-v", args.voice, "-o", output],
+        cwd=str(WORKSPACE),
+        env=os.environ.copy(),
+        capture_output=True,
+        text=True,
     )
+    if result.stdout:
+        print(result.stdout)
+    if result.stderr:
+        print(result.stderr, file=sys.stderr)
+    if result.returncode != 0:
+        error_exit("E_TTS_FAILED", "TTS generation failed")
 
 
 def cmd_image(args):
