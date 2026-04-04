@@ -105,8 +105,8 @@
   <text x="480" y="358" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#94A3B8" letter-spacing="1">— 基础设施 —</text>
 
   <!-- CLI Commands -->
-  <rect x="30" y="378" width="205" height="85" rx="16" fill="#fff" filter="url(#shadow-sm)"/>
-  <rect x="30" y="378" width="205" height="85" rx="16" fill="url(#g-green)" opacity="0.06"/>
+  <rect x="30" y="378" width="170" height="85" rx="16" fill="#fff" filter="url(#shadow-sm)"/>
+  <rect x="30" y="378" width="170" height="85" rx="16" fill="url(#g-green)" opacity="0.06"/>
   <circle cx="68" cy="412" r="18" fill="url(#g-green)"/>
   <text x="68" y="418" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" fill="#fff">⚙</text>
   <text x="95" y="405" font-family="system-ui,sans-serif" font-size="12" font-weight="600" fill="#1E293B">CLI 命令</text>
@@ -115,41 +115,51 @@
   <text x="95" y="450" font-family="system-ui,sans-serif" font-size="8.5" fill="#CBD5E1">tts · image · music · video</text>
 
   <!-- Scripts -->
-  <rect x="255" y="378" width="205" height="85" rx="16" fill="#fff" filter="url(#shadow-sm)"/>
-  <rect x="255" y="378" width="205" height="85" rx="16" fill="url(#g-orange)" opacity="0.06"/>
-  <circle cx="293" cy="412" r="18" fill="url(#g-orange)"/>
-  <text x="293" y="418" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" fill="#fff">📜</text>
-  <text x="320" y="405" font-family="system-ui,sans-serif" font-size="12" font-weight="600" fill="#1E293B">生成脚本</text>
-  <text x="320" y="420" font-family="system-ui,sans-serif" font-size="9" fill="#64748B">tts.py / image_generate.py</text>
-  <text x="320" y="435" font-family="system-ui,sans-serif" font-size="9" fill="#64748B">generate_*.sh</text>
-  <text x="320" y="450" font-family="system-ui,sans-serif" font-size="8.5" fill="#CBD5E1">lib/common.sh · lib/diagnose.sh</text>
+  <rect x="215" y="378" width="170" height="85" rx="16" fill="#fff" filter="url(#shadow-sm)"/>
+  <rect x="215" y="378" width="170" height="85" rx="16" fill="url(#g-orange)" opacity="0.06"/>
+  <circle cx="253" cy="412" r="18" fill="url(#g-orange)"/>
+  <text x="253" y="418" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" fill="#fff">📜</text>
+  <text x="280" y="405" font-family="system-ui,sans-serif" font-size="12" font-weight="600" fill="#1E293B">生成脚本</text>
+  <text x="280" y="420" font-family="system-ui,sans-serif" font-size="9" fill="#64748B">tts.py / image_generate.py</text>
+  <text x="280" y="435" font-family="system-ui,sans-serif" font-size="9" fill="#64748B">generate_*.sh</text>
+  <text x="280" y="450" font-family="system-ui,sans-serif" font-size="8.5" fill="#CBD5E1">lib/common.sh · lib/diagnose.sh</text>
 
   <!-- MCP -->
-  <rect x="480" y="378" width="205" height="85" rx="16" fill="#fff" filter="url(#shadow-sm)"/>
-  <rect x="480" y="378" width="205" height="85" rx="16" fill="url(#g-purple)" opacity="0.06"/>
-  <circle cx="518" cy="412" r="18" fill="url(#g-purple)"/>
-  <text x="518" y="418" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" fill="#fff">🔌</text>
-  <text x="545" y="405" font-family="system-ui,sans-serif" font-size="12" font-weight="600" fill="#1E293B">mcporter MCP</text>
-  <text x="545" y="420" font-family="system-ui,sans-serif" font-size="9" fill="#64748B">MiniMax.web_search</text>
-  <text x="545" y="435" font-family="system-ui,sans-serif" font-size="9" fill="#64748B">MiniMax.understand_image</text>
-  <text x="545" y="450" font-family="system-ui,sans-serif" font-size="8.5" fill="#CBD5E1">图片理解 · 联网搜索</text>
+  <rect x="400" y="378" width="170" height="85" rx="16" fill="#fff" filter="url(#shadow-sm)"/>
+  <rect x="400" y="378" width="170" height="85" rx="16" fill="url(#g-purple)" opacity="0.06"/>
+  <circle cx="438" cy="412" r="18" fill="url(#g-purple)"/>
+  <text x="438" y="418" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" fill="#fff">🔌</text>
+  <text x="465" y="405" font-family="system-ui,sans-serif" font-size="12" font-weight="600" fill="#1E293B">MCP Server</text>
+  <text x="465" y="420" font-family="system-ui,sans-serif" font-size="9" fill="#64748B">tools/read_file</text>
+  <text x="465" y="435" font-family="system-ui,sans-serif" font-size="9" fill="#64748B">tools/edit_file</text>
+  <text x="465" y="450" font-family="system-ui,sans-serif" font-size="8.5" fill="#CBD5E1">tools/bash · tools/glob</text>
+
+  <!-- mcporter -->
+  <rect x="585" y="378" width="170" height="85" rx="16" fill="#fff" filter="url(#shadow-sm)"/>
+  <rect x="585" y="378" width="170" height="85" rx="16" fill="url(#g-purple)" opacity="0.06"/>
+  <circle cx="623" cy="412" r="18" fill="url(#g-purple)"/>
+  <text x="623" y="418" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" fill="#fff">🔌</text>
+  <text x="650" y="405" font-family="system-ui,sans-serif" font-size="12" font-weight="600" fill="#1E293B">mcporter</text>
+  <text x="650" y="420" font-family="system-ui,sans-serif" font-size="9" fill="#64748B">install-mcporter.sh</text>
+  <text x="650" y="435" font-family="system-ui,sans-serif" font-size="9" fill="#64748B">mcporter.json</text>
+  <text x="650" y="450" font-family="system-ui,sans-serif" font-size="8.5" fill="#CBD5E1">uvx · MCP Server</text>
 
   <!-- Config -->
-  <rect x="705" y="378" width="230" height="85" rx="16" fill="#fff" filter="url(#shadow-sm)"/>
-  <rect x="705" y="378" width="230" height="85" rx="16" fill="url(#g-dark)" opacity="0.06"/>
-  <circle cx="743" cy="412" r="18" fill="url(#g-dark)"/>
-  <text x="743" y="418" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" fill="#fff">🔐</text>
-  <text x="770" y="405" font-family="system-ui,sans-serif" font-size="12" font-weight="600" fill="#1E293B">配置与输出</text>
-  <text x="770" y="420" font-family="system-ui,sans-serif" font-size="9" fill="#64748B">.env / mcporter.json</text>
-  <text x="770" y="435" font-family="system-ui,sans-serif" font-size="9" fill="#64748B">minimax-output/</text>
-  <text x="770" y="450" font-family="system-ui,sans-serif" font-size="8.5" fill="#CBD5E1">动态路径 · 无硬编码</text>
+  <rect x="770" y="378" width="175" height="85" rx="16" fill="#fff" filter="url(#shadow-sm)"/>
+  <rect x="770" y="378" width="175" height="85" rx="16" fill="url(#g-dark)" opacity="0.06"/>
+  <circle cx="808" cy="412" r="18" fill="url(#g-dark)"/>
+  <text x="808" y="418" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" fill="#fff">🔐</text>
+  <text x="835" y="405" font-family="system-ui,sans-serif" font-size="12" font-weight="600" fill="#1E293B">配置与输出</text>
+  <text x="835" y="420" font-family="system-ui,sans-serif" font-size="9" fill="#64748B">.env / mcporter.json</text>
+  <text x="835" y="435" font-family="system-ui,sans-serif" font-size="9" fill="#64748B">minimax-output/</text>
+  <text x="835" y="450" font-family="system-ui,sans-serif" font-size="8.5" fill="#CBD5E1">动态路径 · 无硬编码</text>
 
   <!-- Arrows: modules -> infrastructure -->
-  <path d="M 112 320 L 112 355 L 132 355 L 132 378" stroke="#CBD5E1" stroke-width="1.5" fill="none" marker-end="url(#arr-dark)" stroke-dasharray="4,3"/>
-  <path d="M 297 320 L 297 355 L 357 355 L 357 378" stroke="#CBD5E1" stroke-width="1.5" fill="none" marker-end="url(#arr-dark)" stroke-dasharray="4,3"/>
-  <path d="M 482 320 L 482 355 L 582 355 L 582 378" stroke="#CBD5E1" stroke-width="1.5" fill="none" marker-end="url(#arr-dark)" stroke-dasharray="4,3"/>
-  <path d="M 667 320 L 667 355 L 807 355 L 807 378" stroke="#CBD5E1" stroke-width="1.5" fill="none" marker-end="url(#arr-dark)" stroke-dasharray="4,3"/>
-  <path d="M 852 320 L 852 355 L 820 355 L 820 378" stroke="#CBD5E1" stroke-width="1.5" fill="none" marker-end="url(#arr-dark)" stroke-dasharray="4,3"/>
+  <path d="M 112 320 L 112 355 L 115 355 L 115 378" stroke="#CBD5E1" stroke-width="1.5" fill="none" marker-end="url(#arr-dark)" stroke-dasharray="4,3"/>
+  <path d="M 297 320 L 297 355 L 300 355 L 300 378" stroke="#CBD5E1" stroke-width="1.5" fill="none" marker-end="url(#arr-dark)" stroke-dasharray="4,3"/>
+  <path d="M 482 320 L 482 355 L 485 355 L 485 378" stroke="#CBD5E1" stroke-width="1.5" fill="none" marker-end="url(#arr-dark)" stroke-dasharray="4,3"/>
+  <path d="M 667 320 L 667 355 L 670 355 L 670 378" stroke="#CBD5E1" stroke-width="1.5" fill="none" marker-end="url(#arr-dark)" stroke-dasharray="4,3"/>
+  <path d="M 852 320 L 852 355 L 857 355 L 857 378" stroke="#CBD5E1" stroke-width="1.5" fill="none" marker-end="url(#arr-dark)" stroke-dasharray="4,3"/>
 
   <!-- ===== API Layer ===== -->
   <text x="480" y="498" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#94A3B8" letter-spacing="1">— API 服务 —</text>
@@ -173,10 +183,11 @@
   <text x="770" y="582" text-anchor="middle" font-family="system-ui,sans-serif" font-size="9" fill="rgba(255,255,255,0.7)">uvx · MCP Protocol</text>
 
   <!-- Arrows: infrastructure -> APIs -->
-  <path d="M 132 463 L 132 490 L 190 490 L 190 510" stroke="#94A3B8" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <path d="M 357 463 L 357 490 L 480 490 L 480 510" stroke="#94A3B8" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <path d="M 582 463 L 582 490 L 770 490 L 770 510" stroke="#94A3B8" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <path d="M 807 463 L 807 490 L 820 490 L 820 510" stroke="#94A3B8" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <path d="M 115 463 L 115 490 L 190 490 L 190 510" stroke="#94A3B8" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <path d="M 300 463 L 300 490 L 190 490 L 190 510" stroke="#94A3B8" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <path d="M 485 463 L 485 490 L 480 490 L 480 510" stroke="#94A3B8" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <path d="M 670 463 L 670 490 L 770 490 L 770 510" stroke="#94A3B8" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <path d="M 857 463 L 857 490 L 770 490 L 770 510" stroke="#94A3B8" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
 
   <!-- ===== LEGEND ===== -->
   <rect x="30" y="635" width="900" height="50" rx="14" fill="#fff" filter="url(#shadow-sm)"/>
