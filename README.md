@@ -11,6 +11,12 @@
 **🤝 OpenClaw 深度适配**
 - SKILL.md 触发词专为 OpenClaw Agent 调度逻辑优化，接入零门槛
 - mcporter 集成图片理解 + 联网搜索，官方版没有这两个功能
+- `toolkit.py` 统一 CLI，agent 只需一个命令即可了解全部状态
+
+**🎯 Agent 友好**
+- `python3 scripts/toolkit.py check --json` 输出机器可解析的状态 JSON
+- 所有错误返回结构化错误码 + 修复建议，agent 精准定位问题
+- `toolkit.py setup` 一键引导完成全部配置，真正开箱即用
 
 **📤 飞书原生支持**
 - 内置 `send_feishu_audio` / `send_feishu_image` / `send_feishu_native_video` 外挂脚本
@@ -62,6 +68,13 @@ clawhub install minimax-toolkit --workdir ~/.openclaw/workspace --dir skills
 ## 更新日志
 
 ### v1.4.0 (2026-04-04)
+
+**Agent 友好重构：**
+- 🚀 **统一 CLI `toolkit.py`**：所有功能通过单一入口调用，agent 无需了解内部脚本结构
+- 📊 **结构化诊断**：`check --json` 输出机器可解析的 JSON 状态报告
+- 🔍 **精确错误码**：所有错误返回 `E_*` 错误码 + message + hint，agent 可精准定位问题
+- 🧩 **首次运行引导**：`setup` 命令引导用户完成全部配置和功能验证
+- 🩺 **诊断函数库 `diagnose.sh`**：共享诊断逻辑，四个功能各一个检查函数
 
 **Bug 修复：**
 - 🐛 **tts.py fallback 修复**：fallback 直接调 API 时无法读取 `.env` 的问题，添加 `load_env()` 解决
@@ -117,56 +130,41 @@ clawhub install minimax-toolkit --workdir ~/.openclaw/workspace --dir skills
 
 ## 快速开始
 
-### 第一步：mcporter（图片理解 + 联网搜索）
-
-运行一键安装脚本（会自动检测环境、配置 MiniMax MCP）：
+### 推荐：使用统一 CLI（一行命令完成所有操作）
 
 ```bash
-bash ~/.openclaw/workspace/skills/minimax-toolkit/scripts/install-mcporter.sh
+# 首次使用：引导配置
+python3 scripts/toolkit.py setup
+
+# Agent 推荐：查看环境状态（机器可读）
+python3 scripts/toolkit.py check --json
+
+# 查看当前配置
+python3 scripts/toolkit.py env --show
+
+# 设置 API Key
+python3 scripts/toolkit.py env --key sk-cp-your-key-here
+
+# 语音合成
+python3 scripts/toolkit.py tts "你好" -v female-shaonv -o output.mp3
+
+# 图片生成（默认返回 URL，需 --download 才下载）
+python3 scripts/toolkit.py image "一只猫" -o cat.png --download
+
+# 音乐生成
+python3 scripts/toolkit.py music --prompt "ambient electronic" --instrumental -o ambient.mp3
+
+# 视频生成
+python3 scripts/toolkit.py video --prompt "A cat on a moonlit rooftop" -o cat.mp4
 ```
 
-安装后重启 OpenClaw Gateway 使配置生效：
+### mcporter（图片理解 + 联网搜索）
 
 ```bash
+bash scripts/install-mcporter.sh
 openclaw gateway restart
-```
-
-验证是否正常：
-
-```bash
 mcporter list
 ```
-
-### 第二步：其他功能
-
-1. 复制环境变量模板：
-   ```bash
-   cp .env.example .env
-   # 编辑 .env，填入你的 MINIMAX_API_KEY（sk-cp- 或 sk-api- 开头）
-   ```
-
-2. 语音合成：
-   ```bash
-   python3 scripts/tts.py tts "你好，欢迎使用" -v female-shaonv -o output.mp3
-   ```
-
-3. 图片生成：
-   ```bash
-   python3 scripts/image_generate.py "一张咖啡馆的照片" -o output.png
-   ```
-
-4. 音乐生成：
-   ```bash
-   # 纯音乐
-   bash scripts/music/generate_music.sh --instrumental --prompt "ambient electronic" -o ambient.mp3 --download
-   # 带歌词
-   bash scripts/music/generate_music.sh --lyrics "[verse]\nHello world" --prompt "upbeat pop" -o song.mp3 --download
-   ```
-
-5. 视频生成：
-   ```bash
-   bash scripts/video/generate_video.sh --mode t2v --prompt "A cat on a moonlit rooftop" --duration 6 -o video.mp4
-   ```
 
 ## 工具调用示例
 
@@ -196,8 +194,12 @@ minimax-toolkit/
 ├── .env.example            # 环境变量模板
 ├── .gitignore              # Git 忽略配置
 └── scripts/
+    ├── toolkit.py          # 统一 CLI 入口（setup/check/env/tts/image/music/video）
+    ├── setup.sh            # 首次运行引导脚本
+    ├── check.sh            # 诊断检查入口
     ├── lib/
-    │   └── common.sh       # 共享函数库（load_env, check_api_key）
+    │   ├── common.sh       # 共享函数库（load_env, check_api_key, error_exit）
+    │   └── diagnose.sh     # 诊断函数库（check_* 系列）
     ├── install-mcporter.sh # mcporter 一键安装脚本
     ├── tts.py              # 语音合成入口
     ├── tts/generate_voice.sh
