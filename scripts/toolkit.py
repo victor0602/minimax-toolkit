@@ -97,6 +97,16 @@ def load_env():
             return
 
 
+def require_api_key():
+    load_env()
+    if not os.environ.get("MINIMAX_API_KEY", "").strip():
+        error_exit(
+            "E_API_KEY_MISSING",
+            "MINIMAX_API_KEY is not set",
+            hint="Run: python3 scripts/toolkit.py env --key <your-api-key>"
+        )
+
+
 def is_first_run():
     """Check if this is the first time running the toolkit."""
     env_file = PROJECT_ROOT / ".env"
@@ -713,6 +723,7 @@ def build_parser():
 
     # setup
     p_setup = sub.add_parser("setup", help="First-run setup wizard")
+    p_setup.add_argument("--non-interactive", action="store_true", help="Non-interactive mode (uses env vars)")
 
     # check
     p_check = sub.add_parser("check", help="Run diagnostic checks")

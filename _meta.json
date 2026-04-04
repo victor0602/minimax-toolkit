@@ -1,6 +1,6 @@
 {
   "name": "minimax-toolkit",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "MiniMax 全功能工具包。Agent 首先运行 `python3 scripts/toolkit.py check --json` 了解状态。触发词：minimax、生成图片、语音合成、音乐生成、视频生成。",
   "author": "main",
   "created": "2026-03-26"
