@@ -35,7 +35,8 @@ check_api_key() {
 error_exit() {
   local code="$1" message="$2" hint="${3:-}"
   local file="${BASH_SOURCE[1]:-unknown}:${BASH_LINENO[0]:-0}"
-  local json="{\"error\":{\"code\":\"$code\",\"message\":$(printf '%s' "$message" | jq -Rs .)},\"file\":\"$file\"}"
+  local json
+  json="{\"error\":{\"code\":\"$code\",\"message\":$(printf '%s' "$message" | jq -Rs .)},\"file\":\"$file\"}"
   if [[ -n "$hint" ]]; then
     json=$(echo "$json" | jq --arg h "$hint" '.error.hint = $h')
   fi

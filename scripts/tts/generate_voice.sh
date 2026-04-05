@@ -398,7 +398,7 @@ cmd_list_voices() {
 # Subcommand: validate
 # ============================================================================
 cmd_validate() {
-  local segments_file="" model="speech-2.8-hd" strict=false verbose=false
+  local segments_file="" model="speech-2.8-hd" verbose=false
 
   if [[ $# -gt 0 && "$1" != -* ]]; then
     segments_file="$1"; shift
@@ -407,7 +407,7 @@ cmd_validate() {
   while [[ $# -gt 0 ]]; do
     case "$1" in
       --model) model="$2"; shift 2 ;;
-      --strict) strict=true; shift ;;
+      --strict) shift ;;
       -v|--verbose) verbose=true; shift ;;
       --validate-voices) shift ;; # Not implemented in bash version
       *) [[ -z "$segments_file" ]] && segments_file="$1"; shift ;;
@@ -540,7 +540,8 @@ cmd_generate() {
   echo "Temp directory: $temp_dir"
 
   # Cleanup temp dir on exit/interrupt
-  trap "rm -rf '$temp_dir' 2>/dev/null || true" EXIT INT TERM
+  _cleanup_voice_tmp() { rm -rf "$temp_dir" 2>/dev/null || true; }
+  trap _cleanup_voice_tmp EXIT INT TERM
 
   # Generate each segment
   local succeeded=0 failed=0

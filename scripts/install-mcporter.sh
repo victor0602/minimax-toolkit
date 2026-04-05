@@ -34,7 +34,8 @@ else
     # Download to temp file first, then execute (avoid pipe-to-shell)
     install_script=$(mktemp)
     # Trap to clean up on exit/interrupt
-    trap "rm -f \"$install_script\"" EXIT INT TERM
+    _cleanup_install() { rm -f "$install_script" 2>/dev/null; }
+    trap _cleanup_install EXIT INT TERM
     curl -LsSf https://astral.sh/uv/install.sh -o "$install_script"
     # Verify non-empty before executing
     if [[ ! -s "$install_script" ]]; then

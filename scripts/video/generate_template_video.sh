@@ -165,7 +165,7 @@ USAGE
       -d "task_id=$task_id" \
       -H "Authorization: Bearer ${MINIMAX_API_KEY}" \
       --max-time "$REQUEST_TIMEOUT" 2>/dev/null)"; then
-      poll_code="${poll_raw##*$'\n'}"; poll_resp="${poll_raw%$'\n'*}"; cf=0
+      poll_resp="${poll_raw%$'\n'*}"; cf=0
     else
       cf=$((cf+1))
       echo "  Poll error ($cf/$MAX_CONSECUTIVE_FAILURES)"

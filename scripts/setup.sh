@@ -168,7 +168,7 @@ setup_env_file() {
 # 复制此文件为 .env 并填入你的真实密钥
 
 # API Key（sk-cp- 开头为 Token Plan Key，sk-api- 开头为 API Key）
-MINIMAX_API_KEY=$api_key
+MINIMAX_API_KEY="$api_key"
 
 # API 地址（默认中国大陆）
 MINIMAX_API_HOST=https://api.minimaxi.com
@@ -241,8 +241,6 @@ setup_mcporter() {
 run_feature_checks() {
   info "Running feature checks..."
   echo ""
-
-  local results=()
 
   check_result "TTS" diag_check_tts
   check_result "Image Generation" diag_check_image
