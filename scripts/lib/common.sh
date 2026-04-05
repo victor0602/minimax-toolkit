@@ -70,3 +70,32 @@ validate_output_path() {
   fi
   return 0
 }
+
+# Validate an input file path to prevent reading sensitive files
+# Usage: validate_input_path "$path"
+# Returns 0 if safe (relative path, or absolute inside project/cwd), 1 if blocked
+validate_input_path() {
+  local path="$1"
+  if [[ -z "$path" ]]; then
+    return 0
+  fi
+  # Block path traversal
+  if [[ "$path" == *..* ]]; then
+    echo "Error: Path traversal not allowed: $path" >&2
+    return 1
+  fi
+  # For absolute paths: only allow inside cwd or project root
+  if [[ "$path" == /* ]]; then
+    local canonical
+    canonical="$(cd "$(dirname "$path")" && pwd)/$(basename "$path")"
+    local cwd canonical_cwd
+    cwd="$(pwd)"; canonical_cwd="$(cd "$cwd" && pwd)"
+    if [[ "$canonical" != "$canonical_cwd"/* ]]; then
+      if [[ "$canonical" != "$PROJECT_ROOT"/* ]]; then
+        echo "Error: Cannot read files outside project directory: $path" >&2
+        return 1
+      fi
+    fi
+  fi
+  return 0
+}

@@ -24,6 +24,9 @@ source "$(dirname "${BASH_SOURCE[0]}")/../lib/common.sh"
 image_to_data_url() {
   local path="$1"
   [[ -f "$path" ]] || { echo "Error: Image not found: $path" >&2; exit 1; }
+  if ! validate_input_path "$path"; then
+    exit 1
+  fi
   local mime
   mime="$(file -b --mime-type "$path" 2>/dev/null)" || mime="image/jpeg"
   local b64

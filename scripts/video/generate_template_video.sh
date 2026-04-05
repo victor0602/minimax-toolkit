@@ -37,6 +37,9 @@ resolve_media_input() {
     http://*|https://*|data:*) echo "$value"; return ;;
   esac
   [[ -f "$value" ]] || { echo "Error: Media file not found: $value" >&2; exit 1; }
+  if ! validate_input_path "$value"; then
+    exit 1
+  fi
   local mime; mime="$(file -b --mime-type "$value" 2>/dev/null)" || mime="application/octet-stream"
   local b64; b64="$(base64 < "$value")"
   echo "data:${mime};base64,${b64}"
