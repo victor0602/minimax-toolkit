@@ -9,6 +9,8 @@
 import sys
 import os
 import subprocess
+import tempfile
+import atexit
 import scripts.lib.feishu as feishu
 
 CHAT_ID = os.environ.get("FEISHU_CHAT_ID", "")
@@ -16,14 +18,24 @@ CHAT_ID = os.environ.get("FEISHU_CHAT_ID", "")
 
 def extract_cover(video_path):
     """用 ffmpeg 抽取第一帧作为封面，返回临时 jpg 路径；失败返回 None"""
-    cover_path = video_path + "_cover.jpg"
+    tmp = tempfile.NamedTemporaryFile(suffix=".jpg", delete=False)
+    tmp.close()
+    cover_path = tmp.name
+
+    def _cleanup():
+        if os.path.exists(cover_path):
+            os.unlink(cover_path)
+    atexit.register(_cleanup)
+
     r = subprocess.run(
         ["ffmpeg", "-i", video_path, "-vframes", "1", "-f", "image2", cover_path, "-y"],
         capture_output=True, text=True,
     )
     if r.returncode != 0:
-        print(f"[Error] 封面倒抽取失败: {r.stderr}")
+        print(f"[Error] 封面子抽取失败: {r.stderr}")
+        os.unlink(cover_path)
         return None
+    atexit.unregister(_cleanup)
     return cover_path
 
 

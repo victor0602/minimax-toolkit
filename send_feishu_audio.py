@@ -11,6 +11,7 @@ import sys
 import os
 import subprocess
 import tempfile
+import atexit
 import scripts.lib.feishu as feishu
 
 CHAT_ID = os.environ.get("FEISHU_CHAT_ID", "")
@@ -20,15 +21,23 @@ def convert_to_opus(input_path):
     """用 ffmpeg 将音频转为 .opus 格式，返回临时文件路径；失败返回 None"""
     tmp = tempfile.NamedTemporaryFile(suffix=".opus", delete=False)
     tmp.close()
+    opus_path = tmp.name
+
+    def _cleanup():
+        if os.path.exists(opus_path):
+            os.unlink(opus_path)
+    atexit.register(_cleanup)
+
     r = subprocess.run(
         ["ffmpeg", "-i", input_path, "-c:a", "libopus", "-b:a", "128k", "-y", tmp.name],
         capture_output=True, text=True,
     )
     if r.returncode != 0:
         print(f"[Error] 转换为 .opus 失败: {r.stderr}")
-        os.unlink(tmp.name)
+        os.unlink(opus_path)
         return None
-    return tmp.name
+    atexit.unregister(_cleanup)
+    return opus_path
 
 
 def send_as_voice(api, file_path, receive_id):

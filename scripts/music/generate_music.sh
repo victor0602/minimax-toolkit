@@ -121,7 +121,7 @@ USAGE
 
   local field_prompt=""
   if [[ ${#field_parts[@]} -gt 0 ]]; then
-    field_prompt="$(IFS='. '; echo "${field_parts[*]}")"
+    field_prompt="$(IFS=' '; echo "${field_parts[*]}")"
   fi
 
   if [[ -n "$field_prompt" ]]; then

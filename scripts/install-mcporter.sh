@@ -34,7 +34,7 @@ else
     # Download to temp file first, then execute (avoid pipe-to-shell)
     install_script=$(mktemp)
     # Trap to clean up on exit/interrupt
-    trap "rm -f '$install_script'" EXIT INT TERM
+    trap "rm -f \"$install_script\"" EXIT INT TERM
     curl -LsSf https://astral.sh/uv/install.sh -o "$install_script"
     # Verify non-empty before executing
     if [[ ! -s "$install_script" ]]; then
@@ -76,17 +76,23 @@ if [ -f "$MCPORTER_CONFIG_FILE" ]; then
     EXISTING_KEY=$(grep -o '"MINIMAX_API_KEY": "[^"]*"' "$MCPORTER_CONFIG_FILE" 2>/dev/null | head -1 | sed 's/.*: "//;s/"$//')
     if [ -n "$EXISTING_KEY" ]; then
         echo -e "${GREEN}✓ 已找到现有配置，API Key 前缀: ${EXISTING_KEY:0:8}...${NC}"
-        read -p "是否更新 API Key？输入新 Key 直接回车跳过: " NEW_KEY
+        echo -n "是否更新 API Key？输入新 Key 直接回车跳过: " >&2
+        read -rs NEW_KEY < /dev/tty
+        echo >&2
         if [ -n "$NEW_KEY" ]; then
             MINIMAX_API_KEY="$NEW_KEY"
         else
             MINIMAX_API_KEY="$EXISTING_KEY"
         fi
     else
-        read -p "请输入你的 MiniMax Token Plan API Key (sk-cp- 开头): " MINIMAX_API_KEY
+        echo -n "请输入你的 MiniMax Token Plan API Key (sk-cp- 开头): " >&2
+        read -rs MINIMAX_API_KEY < /dev/tty
+        echo >&2
     fi
 else
-    read -p "请输入你的 MiniMax Token Plan API Key (sk-cp- 开头): " MINIMAX_API_KEY
+    echo -n "请输入你的 MiniMax Token Plan API Key (sk-cp- 开头): " >&2
+    read -rs MINIMAX_API_KEY < /dev/tty
+    echo >&2
 fi
 
 if [ -z "$MINIMAX_API_KEY" ]; then
