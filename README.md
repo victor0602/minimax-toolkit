@@ -217,6 +217,11 @@ minimax-toolkit/
 
 ## 更新日志
 
+### v1.5.5 (2026-04-05)
+
+**运维：**
+- ✨ **GitHub Actions CI**：新增 `.github/workflows/ci.yml`，包含 shellcheck 静态检查、环境测试、功能测试（需配置 `MINIMAX_API_KEY` secret）
+
 ### v1.5.4 (2026-04-05)
 
 **安全：**

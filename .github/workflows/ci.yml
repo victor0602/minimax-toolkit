@@ -1,0 +1,73 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install shellcheck
+        run: sudo apt-get update && sudo apt-get install -y shellcheck
+
+      - name: Run shellcheck
+        run: |
+          find . -name "*.sh" -not -path "./.git/*" | xargs shellcheck -x -S warning
+
+  test-env:
+    name: Environment Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip3 install -q requests
+
+      - name: Run environment tests
+        run: python3 scripts/test_env.py
+
+  test-features:
+    name: Feature Tests
+    runs-on: ubuntu-latest
+    # Only run if API key is available (skip for external PRs)
+    if: env.MINIMAX_API_KEY != ''
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip3 install -q requests
+
+      - name: Run feature tests
+        run: python3 scripts/test_features.py
+        env:
+          MINIMAX_API_KEY: ${{ secrets.MINIMAX_API_KEY }}
+          MINIMAX_API_HOST: https://api.minimaxi.com
+
+  test-shell:
+    name: Shell Scripts (macOS)
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install shellcheck
+        run: brew install shellcheck
+
+      - name: Run shellcheck
+        run: |
+          find . -name "*.sh" -not -path "./.git/*" | xargs shellcheck -x -S warning
