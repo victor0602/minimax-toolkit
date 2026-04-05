@@ -163,3 +163,31 @@ class FeishuAPI:
             rid_type,
             token,
         )
+
+    # ── Chat management ───────────────────────────────────────────────────
+
+    def list_chats(self, token=None):
+        """
+        获取机器人所在的所有群聊列表
+        返回 list[dict]；失败返回 []
+        GET /im/v1/chats
+        """
+        hdrs = self.headers(token)
+        if not hdrs:
+            return []
+        chats = []
+        page_token = None
+        while True:
+            params = {"page_size": 50}
+            if page_token:
+                params["page_token"] = page_token
+            res = requests.get(
+                f"{self.BASE_URL}/im/v1/chats",
+                headers=hdrs, params=params, timeout=15,
+            ).json()
+            items = res.get("data", {}).get("items", [])
+            chats.extend(items)
+            page_token = res.get("data", {}).get("page_token")
+            if not page_token or not res.get("data", {}).get("has_more", False):
+                break
+        return chats

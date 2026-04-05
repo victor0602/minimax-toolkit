@@ -47,6 +47,8 @@ python3 scripts/toolkit.py <command> [options]
 | `image <prompt> [-o file]` | 图片生成 |
 | `music --prompt <style> [--lyrics "歌词"]` | 音乐生成 |
 | `video --prompt <desc> [--mode t2v] [-o file]` | 视频生成 |
+| `feishu list` | 列出机器人所在的所有群聊 |
+| `feishu send <file>` | 发送文件到选定的群聊（交互式选择） |
 
 ---
 
@@ -56,6 +58,9 @@ python3 scripts/toolkit.py <command> [options]
 |------|------|------|
 | `MINIMAX_API_KEY` | MiniMax API Key | `sk-cp-xxxxx` 或 `sk-api-xxxxx` |
 | `MINIMAX_API_HOST` | API 地址（默认中国大陆） | `https://api.minimaxi.com` |
+| `FEISHU_APP_ID` | 飞书机器人 App ID | `cli_xxxxx` |
+| `FEISHU_APP_SECRET` | 飞书机器人 App Secret | `xxxxx` |
+| `FEISHU_CHAT_ID` | 默认推送群 ID | `oc_xxxxx` |
 
 **API Key 类型说明：**
 - `sk-cp-` 开头 = **Token Plan Key**（推荐），支持 TTS/音乐/视频/图片
@@ -138,6 +143,30 @@ python3 scripts/toolkit.py video --prompt "A cat on a moonlit rooftop" -o cat.mp
 
 # 图生视频
 python3 scripts/toolkit.py video --mode i2v --prompt "柔和的风吹过" --first-frame photo.png -o anim.mp4
+```
+
+---
+
+## 视频生成
+
+```bash
+# 文生视频（6-10 秒）
+python3 scripts/toolkit.py video --prompt "A cat on a moonlit rooftop" -o cat.mp4
+
+# 图生视频
+python3 scripts/toolkit.py video --mode i2v --prompt "柔和的风吹过" --first-frame photo.png -o anim.mp4
+```
+
+---
+
+## 飞书群管理
+
+```bash
+# 列出机器人所在的所有群聊
+python3 scripts/toolkit.py feishu list
+
+# 发送文件到群聊（交互式选择群）
+python3 scripts/toolkit.py feishu send output.png
 ```
 
 ---

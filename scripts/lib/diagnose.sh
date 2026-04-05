@@ -47,7 +47,7 @@ _json_status() {
   if [[ ${#kv_pairs[@]} -gt 0 ]]; then
     for ((i=0; i<${#kv_pairs[@]}; i+=2)); do
       local key="${kv_pairs[$i]}" val="${kv_pairs[$((i+1))]}"
-      obj+=",\"$key\":$(echo "$val" | jq -Rs .)"
+      obj+=",\"$key\":$(printf '%s' "$val" | jq -Rs .)"
     done
   fi
   obj+="}"
@@ -112,7 +112,6 @@ diag_check_env() {
     return 1
   fi
 
-  local key_type="unknown"
   local key_type="unknown"
   local key_prefix=""
   if [[ -n "${MINIMAX_API_KEY:-}" ]]; then

@@ -40,7 +40,10 @@ SCRIPT_DIR = Path(__file__).parent.resolve()
 PROJECT_ROOT = SCRIPT_DIR.parent
 WORKSPACE = PROJECT_ROOT  # Use toolkit root instead of hardcoded ~/.openclaw/workspace
 
-VERSION = "1.5.1"
+sys.path.insert(0, str(SCRIPT_DIR))
+from lib.feishu import FeishuAPI
+
+VERSION = "1.5.2"
 
 # ---------------------------------------------------------------------------
 # Error handling
@@ -310,11 +313,21 @@ def cmd_doctor(args):
         issues.append(("env_file", "E_ENV_FILE_MISSING", msg, "Run: python3 scripts/toolkit.py setup"))
         if args.fix and api_key:
             print(f"  → Creating .env file with existing API key")
+            feishu_app_id = os.environ.get("FEISHU_APP_ID", "")
+            feishu_app_secret = os.environ.get("FEISHU_APP_SECRET", "")
+            feishu_chat_id = os.environ.get("FEISHU_CHAT_ID", "")
             with open(env_file, "w") as f:
-                f.write(f"""# MiniMax API 配置
-MINIMAX_API_KEY={api_key}
+                lines = ["""# MiniMax API 配置
+MINIMAX_API_KEY={}
 MINIMAX_API_HOST=https://api.minimaxi.com
+""".format(api_key)]
+                if feishu_app_id and feishu_app_secret:
+                    lines.append(f"""# Feishu 配置
+FEISHU_APP_ID={feishu_app_id}
+FEISHU_APP_SECRET={feishu_app_secret}
+FEISHU_CHAT_ID={feishu_chat_id}
 """)
+                f.write("".join(lines))
             print(f"  ✓ Created {env_file}")
             fixes.append("env_file")
     print()
@@ -536,43 +549,6 @@ def cmd_video(args):
 # Feishu helpers
 # ---------------------------------------------------------------------------
 
-def get_feishu_token():
-    """Get Feishu tenant access token."""
-    app_id = os.environ.get("FEISHU_APP_ID", "")
-    app_secret = os.environ.get("FEISHU_APP_SECRET", "")
-    if not app_id or not app_secret:
-        error_exit("E_FEISHU_NOT_CONFIGURED", "FEISHU_APP_ID and FEISHU_APP_SECRET are not set")
-    res = requests.post(
-        "https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal",
-        json={"app_id": app_id, "app_secret": app_secret}
-    ).json()
-    token = res.get("tenant_access_token")
-    if not token:
-        error_exit("E_FEISHU_TOKEN_FAILED", f"Failed to get token: {res}")
-    return token
-
-
-def list_feishu_chats(token):
-    """List all chats the bot is in."""
-    headers = {"Authorization": f"Bearer {token}"}
-    chats = []
-    page_token = None
-    while True:
-        params = {"page_size": 50}
-        if page_token:
-            params["page_token"] = page_token
-        res = requests.get(
-            "https://open.feishu.cn/open-apis/im/v1/chats",
-            headers=headers, params=params
-        ).json()
-        items = res.get("data", {}).get("items", [])
-        chats.extend(items)
-        page_token = res.get("data", {}).get("page_token")
-        if not page_token or not res.get("data", {}).get("has_more", False):
-            break
-    return chats
-
-
 def select_chat_interactive(chats):
     """Let user select a chat interactively."""
     if not chats:
@@ -600,63 +576,6 @@ def select_chat_interactive(chats):
             print("Please enter a number")
 
 
-def send_image_to_chat(token, file_path, chat_id):
-    """Upload and send image to chat."""
-    headers = {"Authorization": f"Bearer {token}"}
-    with open(file_path, "rb") as f:
-        files = {"image": (os.path.basename(file_path), f, "image/jpeg")}
-        data = {"image_type": "message"}
-        res = requests.post(
-            "https://open.feishu.cn/open-apis/im/v1/images",
-            headers=headers, data=data, files=files
-        ).json()
-    image_key = res.get("data", {}).get("image_key")
-    if not image_key:
-        return False, f"Upload failed: {res}"
-    payload = {
-        "receive_id": chat_id,
-        "msg_type": "image",
-        "content": json.dumps({"image_key": image_key})
-    }
-    res = requests.post(
-        "https://open.feishu.cn/open-apis/im/v1/messages?receive_id_type=chat_id",
-        headers=headers, json=payload
-    ).json()
-    if res.get("code") == 0:
-        return True, "Sent successfully"
-    return False, f"Send failed: {res}"
-
-
-def send_file_to_chat(token, file_path, chat_id):
-    """Upload and send file to chat."""
-    headers = {"Authorization": f"Bearer {token}"}
-    with open(file_path, "rb") as f:
-        files = {"file": (os.path.basename(file_path), f, "application/octet-stream")}
-        data = {
-            "file_name": os.path.basename(file_path),
-            "file_size": os.path.getsize(file_path)
-        }
-        res = requests.post(
-            "https://open.feishu.cn/open-apis/im/v1/files",
-            headers=headers, data=data, files=files
-        ).json()
-    file_key = res.get("data", {}).get("file_key")
-    if not file_key:
-        return False, f"Upload failed: {res}"
-    payload = {
-        "receive_id": chat_id,
-        "msg_type": "file",
-        "content": json.dumps({"file_key": file_key})
-    }
-    res = requests.post(
-        "https://open.feishu.cn/open-apis/im/v1/messages?receive_id_type=chat_id",
-        headers=headers, json=payload
-    ).json()
-    if res.get("code") == 0:
-        return True, "Sent successfully"
-    return False, f"Send failed: {res}"
-
-
 def get_file_type(file_path):
     """Return file category based on extension."""
     ext = os.path.splitext(file_path)[1].lower()
@@ -677,9 +596,12 @@ def get_file_type(file_path):
 # ---------------------------------------------------------------------------
 
 def cmd_feishu(args):
+    api = FeishuAPI()
+    if not api.check_config():
+        error_exit("E_FEISHU_NOT_CONFIGURED", "FEISHU_APP_ID and FEISHU_APP_SECRET are not set")
+
     if args.feishu_sub == "list":
-        token = get_feishu_token()
-        chats = list_feishu_chats(token)
+        chats = api.list_chats()
         for chat in chats:
             name = chat.get("name", "Unnamed")
             chat_id = chat.get("chat_id", "")
@@ -693,8 +615,7 @@ def cmd_feishu(args):
         if not os.path.exists(args.file):
             error_exit("E_FILE_NOT_FOUND", f"File not found: {args.file}")
 
-        token = get_feishu_token()
-        chats = list_feishu_chats(token)
+        chats = api.list_chats()
         chat = select_chat_interactive(chats)
         if not chat:
             print("Cancelled")
@@ -705,11 +626,20 @@ def cmd_feishu(args):
         file_type = get_file_type(args.file)
 
         if file_type == "image":
-            success, msg = send_image_to_chat(token, args.file, chat_id)
+            image_key = api.upload_image(args.file)
+            if not image_key:
+                error_exit("E_FEISHU_UPLOAD_FAILED", "Image upload failed")
+            res = api.send_image(chat_id, image_key)
         else:
-            success, msg = send_file_to_chat(token, args.file, chat_id)
+            file_key = api.upload_file(args.file, "stream")
+            if not file_key:
+                error_exit("E_FEISHU_UPLOAD_FAILED", "File upload failed")
+            res = api.send_file(chat_id, file_key)
 
-        print(f"\n[{chat_name}] {msg}")
+        if not res:
+            error_exit("E_FEISHU_SEND_FAILED", "Message send failed")
+
+        print(f"\n[{chat_name}] Sent successfully")
         return
 
     else:

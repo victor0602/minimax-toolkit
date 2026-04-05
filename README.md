@@ -217,6 +217,20 @@ minimax-toolkit/
 
 ## 更新日志
 
+### v1.5.2 (2026-04-05)
+
+**重构：**
+- 🔧 **cmd_feishu 重构**：删除 ~110 行内联重复代码，改用 `FeishuAPI` 共享库
+- 🔧 **FeishuAPI 补全**：新增 `list_chats()` 方法，群聊列表功能统一
+
+**修复：**
+- 🔧 **doctor --fix .env 创建**：现在同时包含 Feishu 环境变量（FEISHU_APP_ID / FEISHU_APP_SECRET / FEISHU_CHAT_ID）
+- 🔧 **JSON 输出修复**：`diagnose.sh` / `common.sh` 的 `echo|jq` 改为 `printf '%s'|jq`，消除值末多余 `\n`
+- 🔧 **diagnose.sh 清理**：删除重复的 `local key_type` 声明
+
+**文档：**
+- 📖 **SKILL.md 补全**：新增飞书命令文档（`feishu list` / `feishu send`）和环境变量说明
+
 ### v1.5.1 (2026-04-04)
 
 **重构：**
