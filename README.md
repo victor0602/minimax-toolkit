@@ -21,7 +21,7 @@
 |------|------|------|
 | 🎙 **TTS** | speech-2.8-hd | 语音合成，支持多种音色 |
 | 🎨 **Image** | image-01 | 文生图 / 图生图 |
-| 🎬 **Video** | MiniMax-Hailuo-2.3 | 文生视频 / 图生视频 / 首尾帧 |
+| 🎬 **Video** | Hailuo-2.3 | 文生视频 / 图生视频 / 首尾帧 |
 | 🎵 **Music** | music-2.5 | 歌词+旋律 或 纯音乐 |
 | 📨 **Feishu** | — | 图片/音频/视频气泡推送 |
 
@@ -108,6 +108,30 @@ python3 scripts/toolkit.py feishu list
 python3 scripts/toolkit.py feishu send output.png
 ```
 
+### 飞书消息发送（独立脚本）
+
+独立脚本可独立运行，不依赖 `toolkit.py`：
+
+```bash
+# 发送图片（支持 chat_id / open_id）
+python3 send_feishu_image.py cat.png
+python3 send_feishu_image.py cat.png --user ou_xxxxxxxx
+
+# 发送音频
+#  原生语音（绿色气泡，需 .opus 格式，MP3 会自动转换）
+python3 send_feishu_audio.py voice.mp3
+#  文件形式（带播放器）
+python3 send_feishu_audio.py voice.mp3 file
+
+# 发送视频
+#  原生气泡（封面 + mp4， 推荐）
+python3 send_feishu_native_video.py video.mp4
+#  文件形式（带播放器）
+python3 send_feishu_video.py video.mp4
+```
+
+> 注意：音频必须为 `.opus` 格式（MP3 会自动转）；视频原生气泡需 ffmpeg 抽取首帧作为封面。
+
 ---
 
 ## 可用音色
@@ -115,11 +139,11 @@ python3 scripts/toolkit.py feishu send output.png
 | ID | 名称 |
 |----|------|
 | `female-shaonv` | 少女 |
-| `male-qn-qingse` | 青男 |
 | `female-yujie` | 御姐 |
-| `male-yuanbin` | 元彬 |
 | `female-baihe` | 百合 |
 | `female-jingying` | 京莺 |
+| `male-yuanbin` | 元彬 |
+| `male-qn-qingse` | 青男 |
 
 ---
 
