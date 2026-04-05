@@ -190,7 +190,7 @@ diag_check_tts() {
   local resp
   resp=$(_api_request POST "t2a_v2" '{"model":"speech-2.8-hd","text":"test","voice_setting":{"voice_id":"female-shaonv","speed":1.0,"vol":1.0,"pitch":0},"audio_setting":{"sample_rate":32000,"bitrate":128000,"format":"mp3","channel":1},"stream":false,"output_format":"hex"}' 2>/dev/null) || {
     local err_msg
-    err_msg=$(echo "$resp" | jq -r '.base_resp.status_msg // "request failed"')
+    err_msg=$(echo "$resp" | jq -r '.base_resp.status_msg // "request failed"' 2>/dev/null || echo "request failed")
     _json_status "tts" "error" "reason" "$err_msg"
     return 0
   }
@@ -219,7 +219,7 @@ diag_check_image() {
   local resp
   resp=$(_api_request POST "image_generation" '{"model":"image-01","prompt":"test","response_format":"url","n":1}' 2>/dev/null) || {
     local err_msg
-    err_msg=$(echo "$resp" | jq -r '.base_resp.status_msg // "request failed"')
+    err_msg=$(echo "$resp" | jq -r '.base_resp.status_msg // "request failed"' 2>/dev/null || echo "request failed")
     _json_status "image" "error" "reason" "$err_msg"
     return 0
   }
@@ -248,7 +248,7 @@ diag_check_music() {
   local resp
   resp=$(_api_request POST "music_generation" '{"model":"music-2.5","prompt":"short test","output_format":"url","stream":false}' 2>/dev/null) || {
     local err_msg
-    err_msg=$(echo "$resp" | jq -r '.base_resp.status_msg // "request failed"')
+    err_msg=$(echo "$resp" | jq -r '.base_resp.status_msg // "request failed"' 2>/dev/null || echo "request failed")
     _json_status "music" "error" "reason" "$err_msg"
     return 0
   }
@@ -278,7 +278,7 @@ diag_check_video() {
   # Use a simple t2v with minimal prompt
   resp=$(_api_request POST "video_generation" '{"model":"MiniMax-Hailuo-2.3","prompt":"test","duration":6,"resolution":"768P"}' 2>/dev/null) || {
     local err_msg
-    err_msg=$(echo "$resp" | jq -r '.base_resp.status_msg // "request failed"')
+    err_msg=$(echo "$resp" | jq -r '.base_resp.status_msg // "request failed"' 2>/dev/null || echo "request failed")
     _json_status "video" "error" "reason" "$err_msg"
     return 0
   }

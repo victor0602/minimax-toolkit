@@ -208,7 +208,7 @@ USAGE
 
   if [[ "$output_format" == "hex" ]]; then
     local audio_hex
-    audio_hex="$(echo "$response" | jq -r '.data.audio // empty')"
+    audio_hex="$(echo "$response" | jq -r '.data.audio // empty' 2>/dev/null)" || audio_hex=""
     if [[ -z "$audio_hex" ]]; then
       echo "Error: No audio hex data in response." >&2
       exit 1
@@ -218,7 +218,7 @@ USAGE
 
   elif [[ "$output_format" == "url" ]]; then
     local audio_url
-    audio_url="$(echo "$response" | jq -r '.data.audio_url // .data.audio // .data.audio_file.download_url // empty')"
+    audio_url="$(echo "$response" | jq -r '.data.audio_url // .data.audio // .data.audio_file.download_url // empty' 2>/dev/null)" || audio_url=""
     if [[ -z "$audio_url" ]]; then
       echo "Error: No audio URL in response." >&2
       echo "$response" | jq . >&2

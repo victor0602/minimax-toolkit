@@ -75,7 +75,7 @@ api_request() {
   status_code="$(echo "$response" | jq -r '.base_resp.status_code // 0')" 2>/dev/null || true
   if [[ "$status_code" != "0" && -n "$status_code" ]]; then
     local status_msg
-    status_msg="$(echo "$response" | jq -r '.base_resp.status_msg // "Unknown error"')"
+    status_msg="$(echo "$response" | jq -r '.base_resp.status_msg // "Unknown error"' 2>/dev/null)" || status_msg="Unknown error"
     echo "Error: API error [$status_code]: $status_msg" >&2
     exit 1
   fi
@@ -114,7 +114,7 @@ api_upload() {
   status_code="$(echo "$response" | jq -r '.base_resp.status_code // 0')" 2>/dev/null || true
   if [[ "$status_code" != "0" && -n "$status_code" ]]; then
     local status_msg
-    status_msg="$(echo "$response" | jq -r '.base_resp.status_msg // "Unknown error"')"
+    status_msg="$(echo "$response" | jq -r '.base_resp.status_msg // "Unknown error"' 2>/dev/null)" || status_msg="Unknown error"
     echo "Error: API error [$status_code]: $status_msg" >&2
     exit 1
   fi
@@ -205,7 +205,7 @@ cmd_tts() {
 
   # Extract hex audio
   local audio_hex
-  audio_hex="$(echo "$response" | jq -r '.data.audio // .extra_info.audio // empty')"
+  audio_hex="$(echo "$response" | jq -r '.data.audio // .extra_info.audio // empty' 2>/dev/null)" || audio_hex=""
 
   if [[ -z "$audio_hex" ]]; then
     echo "Error: No audio data returned from API" >&2
@@ -263,7 +263,7 @@ cmd_clone() {
   # Step 1: Upload audio
   local upload_response file_id
   upload_response="$(api_upload files/upload "$audio_file" voice_clone)"
-  file_id="$(echo "$upload_response" | jq -r '.file.file_id // .file_id // empty')"
+  file_id="$(echo "$upload_response" | jq -r '.file.file_id // .file_id // empty' 2>/dev/null)" || file_id=""
 
   if [[ -z "$file_id" ]]; then
     echo "Error: Upload succeeded but no file_id was returned" >&2
@@ -333,11 +333,11 @@ cmd_design() {
   response="$(api_request POST voice_design "$payload")"
 
   local actual_voice_id
-  actual_voice_id="${voice_id:-$(echo "$response" | jq -r '.voice_id // "unknown"')}"
+  actual_voice_id="${voice_id:-$(echo "$response" | jq -r '.voice_id // "unknown"' 2>/dev/null)}"
   echo "Voice designed: $actual_voice_id"
 
   local trial_audio
-  trial_audio="$(echo "$response" | jq -r '.trial_audio // empty')"
+  trial_audio="$(echo "$response" | jq -r '.trial_audio // empty' 2>/dev/null)" || trial_audio=""
   if [[ -n "$trial_audio" ]]; then
     local pout="${preview_output:-${actual_voice_id}_preview.mp3}"
     hex_to_file "$trial_audio" "$pout"
@@ -522,7 +522,7 @@ cmd_generate() {
   # Validate first
   echo "Validating segments file..."
   local segments count
-  segments="$(jq -r 'if type == "array" then . elif type == "object" and has("segments") then .segments else empty end' "$segments_file")"
+  segments="$(jq -r 'if type == "array" then . elif type == "object" and has("segments") then .segments else empty end' "$segments_file" 2>/dev/null)" || segments="[]"
   count="$(echo "$segments" | jq 'length')"
 
   if [[ "$count" -eq 0 ]]; then
@@ -587,7 +587,7 @@ cmd_generate() {
 
     local response audio_hex
     if response="$(api_request POST t2a_v2 "$payload" 2>&1)"; then
-      audio_hex="$(echo "$response" | jq -r '.data.audio // .extra_info.audio // empty')"
+      audio_hex="$(echo "$response" | jq -r '.data.audio // .extra_info.audio // empty' 2>/dev/null)" || audio_hex=""
       if [[ -n "$audio_hex" ]]; then
         hex_to_file "$audio_hex" "$seg_output"
         segment_files+=("$seg_output")

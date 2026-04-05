@@ -78,7 +78,7 @@ create_task() {
   fi
 
   local task_id
-  task_id="$(echo "$response" | jq -r '.task_id // empty')"
+  task_id="$(echo "$response" | jq -r '.task_id // empty' 2>/dev/null)" || task_id=""
   if [[ -z "$task_id" ]]; then
     echo "Error: No task_id in response" >&2; echo "$response" >&2; exit 1
   fi

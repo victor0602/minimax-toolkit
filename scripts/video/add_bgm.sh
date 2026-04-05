@@ -61,7 +61,7 @@ generate_music() {
   [[ "$sc" != "0" && -n "$sc" ]] && { echo "Error: Music API error: $(echo "$response" | jq '.base_resp')" >&2; return 1; }
 
   local audio_url
-  audio_url="$(echo "$response" | jq -r '.data.audio_url // .data.audio // .data.audio_file.download_url // empty')"
+  audio_url="$(echo "$response" | jq -r '.data.audio_url // .data.audio // .data.audio_file.download_url // empty' 2>/dev/null)" || audio_url=""
   [[ -z "$audio_url" ]] && { echo "Error: No audio URL in music response" >&2; return 1; }
 
   mkdir -p "$(dirname "$output_path")"

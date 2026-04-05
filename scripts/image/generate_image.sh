@@ -192,7 +192,7 @@ USAGE
   status_code="$(echo "$response" | jq -r '.base_resp.status_code // 0')" 2>/dev/null || true
   if [[ "$status_code" != "0" && -n "$status_code" ]]; then
     local status_msg
-    status_msg="$(echo "$response" | jq -r '.base_resp.status_msg // "Unknown error"')"
+    status_msg="$(echo "$response" | jq -r '.base_resp.status_msg // "Unknown error"' 2>/dev/null)" || status_msg="Unknown error"
     echo "Error: API error (code $status_code): $status_msg" >&2
     exit 1
   fi
@@ -236,7 +236,7 @@ USAGE
     if $download; then
       if [[ "$count" -eq 1 ]]; then
         local img_url
-        img_url="$(echo "$response" | jq -r '.data.image_urls[0]')"
+        img_url="$(echo "$response" | jq -r '.data.image_urls[0]' 2>/dev/null)" || img_url=""
         echo "URL: $img_url"
         curl -s -o "$output" --max-time 120 "$img_url"
         echo "Image downloaded to: $output"
@@ -245,7 +245,7 @@ USAGE
         local base="${output%.*}"
         for ((i=0; i<count; i++)); do
           local img_url out_file
-          img_url="$(echo "$response" | jq -r ".data.image_urls[$i]")"
+          img_url="$(echo "$response" | jq -r ".data.image_urls[$i]" 2>/dev/null)" || img_url=""
           out_file="${base}_$((i+1)).${ext}"
           echo "URL $((i+1)): $img_url"
           curl -s -o "$out_file" --max-time 120 "$img_url"
@@ -255,7 +255,7 @@ USAGE
     else
       for ((i=0; i<count; i++)); do
         local img_url
-        img_url="$(echo "$response" | jq -r ".data.image_urls[$i]")"
+        img_url="$(echo "$response" | jq -r ".data.image_urls[$i]" 2>/dev/null)" || img_url=""
         echo "Image URL $((i+1)): $img_url"
       done
       echo "Use without --no-download to save files automatically."

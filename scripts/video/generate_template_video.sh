@@ -146,7 +146,7 @@ USAGE
   [[ "$sc" != "0" && -n "$sc" ]] && { echo "Error: $(echo "$response" | jq '.base_resp')" >&2; exit 1; }
 
   local task_id
-  task_id="$(echo "$response" | jq -r '.task_id // empty')"
+  task_id="$(echo "$response" | jq -r '.task_id // empty' 2>/dev/null)" || task_id=""
   [[ -z "$task_id" ]] && { echo "Error: No task_id in response" >&2; exit 1; }
   echo "Task created: $task_id"
 
@@ -174,18 +174,18 @@ USAGE
     fi
 
     local status
-    status="$(echo "$poll_resp" | jq -r '.status // "Unknown"')"
+    status="$(echo "$poll_resp" | jq -r '.status // "Unknown"' 2>/dev/null)" || status="Unknown"
     echo "  [${elapsed}s] Status: $status"
 
     if [[ "$status" == "Success" ]]; then
       local video_url
-      video_url="$(echo "$poll_resp" | jq -r '.video_url // empty')"
+      video_url="$(echo "$poll_resp" | jq -r '.video_url // empty' 2>/dev/null)" || video_url=""
       [[ -z "$video_url" ]] && { echo "Error: No video_url in response" >&2; exit 1; }
       break
     fi
 
     [[ "$status" == "Fail" || "$status" == "Failed" || "$status" == "Error" ]] && {
-      echo "Error: Task failed: $(echo "$poll_resp" | jq -r '.base_resp.status_msg // "Unknown"')" >&2
+      echo "Error: Task failed: $(echo "$poll_resp" | jq -r '.base_resp.status_msg // "Unknown"' 2>/dev/null || echo "Unknown")" >&2
       exit 1
     }
 
