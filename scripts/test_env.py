@@ -84,7 +84,13 @@ def test_config_file():
             print(f"  {WARN} API key not set or is placeholder")
             return False
     else:
-        print(f"  {FAIL} .env not found")
+        # .env is gitignored — check if MINIMAX_API_KEY is set via environment
+        api_key = os.environ.get("MINIMAX_API_KEY", "")
+        if api_key and api_key not in ("sk-cp-xxx", "sk-api-xxx", "YOUR_API_KEY"):
+            masked = api_key[:8] + "..."
+            print(f"  {PASS} .env not found, but MINIMAX_API_KEY env var is set: {masked}")
+            return True
+        print(f"  {FAIL} .env not found (and MINIMAX_API_KEY env var is not set)")
         print(f"       Run: python3 scripts/toolkit.py doctor --fix")
         return False
 

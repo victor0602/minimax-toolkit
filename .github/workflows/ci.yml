@@ -14,17 +14,22 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Install shellcheck
-        run: sudo apt-get update && sudo apt-get install -y shellcheck
+        run: sudo apt-get update && sudo apt-get install -y shellcheck jq curl bc
 
       - name: Run shellcheck
         run: |
-          find . -name "*.sh" -not -path "./.git/*" | xargs shellcheck -x -S warning -o SC1091=off
+          find . -name "*.sh" -not -path "./.git/*" | xargs shellcheck -x -S warning \
+            -o SC1091=off   `# source paths not resolvable at lint time` \
+            -o SC2034=off   `# variable used in sourced scripts, not tracked across files`
 
   test-env:
     name: Environment Tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Install system dependencies
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg jq curl bc
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -70,4 +75,6 @@ jobs:
 
       - name: Run shellcheck
         run: |
-          find . -name "*.sh" -not -path "./.git/*" | xargs shellcheck -x -S warning -o SC1091=off
+          find . -name "*.sh" -not -path "./.git/*" | xargs shellcheck -x -S warning \
+            -o SC1091=off   `# source paths not resolvable at lint time` \
+            -o SC2034=off   `# variable used in sourced scripts, not tracked across files`
