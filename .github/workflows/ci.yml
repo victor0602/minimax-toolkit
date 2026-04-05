@@ -40,8 +40,8 @@ jobs:
   test-features:
     name: Feature Tests
     runs-on: ubuntu-latest
-    # Feature tests hit real API — only run on main branch (not PRs from forks)
-    if: github.ref == 'refs/heads/main' && secrets.MINIMAX_API_KEY != ''
+    # Feature tests hit real API — only run on main branch
+    if: github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v4
 
