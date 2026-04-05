@@ -39,5 +39,6 @@ When using this toolkit:
 - Shell scripts use `set -euo pipefail` to fail safely on errors
 
 ### Temporary Files
-- Generation scripts create temporary files in `/tmp` which are cleaned up on exit
+- `generate_voice.sh` creates temporary files in a `tmp/` subdirectory alongside the output, cleaned up via `trap` on EXIT/INT/TERM signals
+- `generate_video.sh`, `generate_long_video.sh`, `generate_template_video.sh` also use trap-based cleanup for temp directories
 - Interrupt handlers (Ctrl+C) also trigger cleanup via `trap`

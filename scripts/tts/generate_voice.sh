@@ -213,6 +213,9 @@ cmd_tts() {
   fi
 
   if [[ -n "$output" ]]; then
+    if ! validate_output_path "$output"; then
+      exit 1
+    fi
     hex_to_file "$audio_hex" "$output"
     echo "Done: $output"
   else
@@ -512,6 +515,9 @@ cmd_generate() {
     echo "Error: -o/--output is required" >&2
     exit 1
   fi
+  if ! validate_output_path "$output"; then
+    exit 1
+  fi
 
   # Validate first
   echo "Validating segments file..."
@@ -646,6 +652,9 @@ cmd_merge() {
     echo "Error: -o/--output is required" >&2
     exit 1
   fi
+  if ! validate_output_path "$output"; then
+    exit 1
+  fi
 
   for f in "${input_files[@]}"; do
     if [[ ! -f "$f" ]]; then
@@ -771,6 +780,9 @@ cmd_convert() {
   fi
   if [[ -z "$output" ]]; then
     echo "Error: -o/--output is required" >&2
+    exit 1
+  fi
+  if ! validate_output_path "$output"; then
     exit 1
   fi
 

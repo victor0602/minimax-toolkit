@@ -123,6 +123,9 @@ USAGE
   if [[ -z "$output" ]]; then
     echo "Error: --output / -o is required" >&2; exit 1
   fi
+  if ! validate_output_path "$output"; then
+    exit 1
+  fi
 
   # Validate n range
   if [[ "$n" -lt 1 || "$n" -gt 9 ]] 2>/dev/null; then
