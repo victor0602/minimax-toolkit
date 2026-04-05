@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# MIT License — Copyright (c) 2026 Victor
+# https://github.com/victor0602/minimax-toolkit
+#
 # MiniMax Music Generation CLI (pure bash)
 #
 # Usage:

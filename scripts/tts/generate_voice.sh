@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# MIT License — Copyright (c) 2026 Victor
+# https://github.com/victor0602/minimax-toolkit
+#
 # MiniMax Voice CLI — Unified TTS command-line interface (pure bash)
 #
 # Usage:
@@ -529,6 +532,9 @@ cmd_generate() {
   fi
   mkdir -p "$temp_dir"
   echo "Temp directory: $temp_dir"
+
+  # Cleanup temp dir on exit/interrupt
+  trap "rm -rf '$temp_dir' 2>/dev/null || true" EXIT INT TERM
 
   # Generate each segment
   local succeeded=0 failed=0

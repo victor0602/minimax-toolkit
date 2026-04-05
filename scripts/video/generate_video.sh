@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# MIT License — Copyright (c) 2026 Victor
+# https://github.com/victor0602/minimax-toolkit
+#
 # MiniMax Video Generation CLI (pure bash)
 #
 # Usage:
@@ -267,7 +270,15 @@ USAGE
   payload=$(echo "$payload" | jq --argjson d "$duration" '. + {duration: $d}')
   payload=$(echo "$payload" | jq --arg r "$resolution" '. + {resolution: $r}')
 
-  [[ -n "$prompt_optimizer" ]] && payload=$(echo "$payload" | jq --argjson po "$(echo "$prompt_optimizer" | tr '[:upper:]' '[:lower:]' | jq -R 'test("true")')" '. + {prompt_optimizer: $po}')
+  if [[ -n "$prompt_optimizer" ]]; then
+    local po_json
+    case "${prompt_optimizer,,}" in
+      true) po_json='true' ;;
+      false) po_json='false' ;;
+      *) echo "Error: --prompt-optimizer must be 'true' or 'false'" >&2; exit 1 ;;
+    esac
+    payload=$(echo "$payload" | jq --argjson po "$po_json" '. + {prompt_optimizer: $po}')
+  fi
   [[ -n "$callback_url" ]] && payload=$(echo "$payload" | jq --arg cu "$callback_url" '. + {callback_url: $cu}')
   [[ -n "$aigc_watermark" ]] && payload=$(echo "$payload" | jq --argjson aw "$aigc_watermark" '. + {aigc_watermark: $aw}')
 
@@ -280,7 +291,15 @@ USAGE
       local ff_url
       ff_url="$(resolve_image "$first_frame")"
       payload=$(echo "$payload" | jq --arg ff "$ff_url" '. + {first_frame_image: $ff}')
-      [[ -n "$fast_pretreatment" ]] && payload=$(echo "$payload" | jq --argjson fp "$(echo "$fast_pretreatment" | tr '[:upper:]' '[:lower:]' | jq -R 'test("true")')" '. + {fast_pretreatment: $fp}')
+      if [[ -n "$fast_pretreatment" ]]; then
+        local fp_json
+        case "${fast_pretreatment,,}" in
+          true) fp_json='true' ;;
+          false) fp_json='false' ;;
+          *) echo "Error: --fast-pretreatment must be 'true' or 'false'" >&2; exit 1 ;;
+        esac
+        payload=$(echo "$payload" | jq --argjson fp "$fp_json" '. + {fast_pretreatment: $fp}')
+      fi
       ;;
     sef)
       if [[ -z "$first_frame" ]]; then

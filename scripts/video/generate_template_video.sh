@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# MIT License — Copyright (c) 2026 Victor
+# https://github.com/victor0602/minimax-toolkit
+#
 # MiniMax Template Video Generation CLI (pure bash)
 #
 # Usage:
@@ -20,6 +23,9 @@ POLL_INTERVAL=10
 MAX_WAIT_TIME=600
 REQUEST_TIMEOUT=60
 MAX_CONSECUTIVE_FAILURES=5
+
+# shellcheck source=../lib/common.sh
+source "$(dirname "${BASH_SOURCE[0]}")/../lib/common.sh"
 
 # ============================================================================
 # Common functions
@@ -114,6 +120,9 @@ USAGE
   fi
   if [[ -z "$output" ]]; then
     echo "Error: --output / -o is required" >&2; exit 1
+  fi
+  if ! validate_output_path "$output"; then
+    exit 1
   fi
 
   # Build payload

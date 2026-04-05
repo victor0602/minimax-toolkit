@@ -46,7 +46,7 @@ WORKSPACE = PROJECT_ROOT  # Use toolkit root instead of hardcoded ~/.openclaw/wo
 sys.path.insert(0, str(SCRIPT_DIR))
 from lib.feishu import FeishuAPI
 
-VERSION = "1.5.5"
+VERSION = "1.5.6"
 
 # ---------------------------------------------------------------------------
 # Error handling
