@@ -722,11 +722,17 @@ _merge_audio_files() {
   if [[ "$no_normalize" != "true" ]]; then
     local tmp_concat
     tmp_concat="$(mktemp /tmp/concat_out_XXXXXX.mp3)"
-    ffmpeg -y -f concat -safe 0 -i "$concat_file" -c copy "$tmp_concat" 2>/dev/null
-    ffmpeg -y -i "$tmp_concat" -af "loudnorm=I=-16:TP=-1.5:LRA=11" -acodec libmp3lame "$output" 2>/dev/null
+    if ! ffmpeg -y -f concat -safe 0 -i "$concat_file" -c copy "$tmp_concat" 2>&1 | head -5; then
+      echo "Error: Concat demuxer failed" >&2; rm -f "$tmp_concat" "$concat_file"; exit 1
+    fi
+    if ! ffmpeg -y -i "$tmp_concat" -af "loudnorm=I=-16:TP=-1.5:LRA=11" -acodec libmp3lame "$output" 2>&1 | head -5; then
+      echo "Error: Audio normalization failed" >&2; rm -f "$tmp_concat" "$concat_file"; exit 1
+    fi
     rm -f "$tmp_concat"
   else
-    ffmpeg -y -f concat -safe 0 -i "$concat_file" -c copy "$output" 2>/dev/null
+    if ! ffmpeg -y -f concat -safe 0 -i "$concat_file" -c copy "$output" 2>&1 | head -5; then
+      echo "Error: Concat demuxer failed" >&2; rm -f "$concat_file"; exit 1
+    fi
   fi
 
   rm -f "$concat_file"
@@ -791,13 +797,7 @@ cmd_convert() {
 # Subcommand: check-env
 # ============================================================================
 cmd_check_env() {
-  local check_script="$SCRIPT_DIR/../check_environment.sh"
-  if [[ -f "$check_script" ]]; then
-    bash "$check_script" "$@"
-  else
-    echo "check_environment.sh not found" >&2
-    exit 1
-  fi
+  bash "$SCRIPT_DIR/../check.sh" "$@"
 }
 
 # ============================================================================

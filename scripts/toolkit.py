@@ -43,7 +43,7 @@ WORKSPACE = PROJECT_ROOT  # Use toolkit root instead of hardcoded ~/.openclaw/wo
 sys.path.insert(0, str(SCRIPT_DIR))
 from lib.feishu import FeishuAPI
 
-VERSION = "1.5.2"
+VERSION = "1.5.3"
 
 # ---------------------------------------------------------------------------
 # Error handling
@@ -437,7 +437,7 @@ def cmd_tts(args):
     os.makedirs(os.path.dirname(os.path.abspath(output)) if os.path.dirname(output) else "minimax-output", exist_ok=True)
     result = subprocess.run(
         ["python3", str(SCRIPT_DIR / "tts.py"), "tts", args.text,
-         "-v", args.voice, "-o", output],
+         "-v", args.voice, "--model", args.model, "-o", output],
         cwd=str(WORKSPACE),
         env=os.environ.copy(),
         capture_output=True,
@@ -681,6 +681,7 @@ def build_parser():
     p_tts.add_argument("text", help="Text to synthesize")
     p_tts.add_argument("-v", "--voice", default="female-shaonv", help="Voice ID (default: female-shaonv)")
     p_tts.add_argument("-o", "--output", help="Output file path")
+    p_tts.add_argument("--model", default="speech-2.8-hd", help="Model ID (default: speech-2.8-hd)")
 
     # image
     p_img = sub.add_parser("image", help="Generate image")
@@ -712,6 +713,7 @@ def build_parser():
     p_send = feishu_sub.add_parser("send", help="Send file to selected group")
     p_send.add_argument("file", help="File path to send (image/audio/video)")
 
+    parser.add_argument("--version", action="store_true", help="Show version")
     return parser
 
 
@@ -722,6 +724,10 @@ def build_parser():
 def main():
     parser = build_parser()
     args = parser.parse_args()
+
+    if args.version:
+        print(f"MiniMax Toolkit {VERSION}")
+        sys.exit(0)
 
     if not args.command:
         parser.print_help()

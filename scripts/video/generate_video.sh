@@ -66,8 +66,8 @@ create_task() {
   fi
 
   local sc
-  sc="$(echo "$response" | jq -r '.base_resp.status_code // 0')" 2>/dev/null || true
-  if [[ "$sc" != "0" && -n "$sc" ]]; then
+  sc="$(echo "$response" | jq -r '(.base_resp.status_code // 0)')" || sc=0
+  if [[ "$sc" != "0" ]]; then
     echo "Error: API error: $(echo "$response" | jq '.base_resp')" >&2; exit 1
   fi
 
@@ -244,6 +244,9 @@ USAGE
   fi
   if [[ -z "$output" ]]; then
     echo "Error: --output / -o is required" >&2; exit 1
+  fi
+  if ! validate_output_path "$output"; then
+    exit 1
   fi
 
   # Default model per mode

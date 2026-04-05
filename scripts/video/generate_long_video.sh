@@ -84,8 +84,8 @@ _create_task() {
     --max-time "$REQUEST_TIMEOUT" -d "$payload")"
   http_code="${raw##*$'\n'}"; response="${raw%$'\n'*}"
   [[ "$http_code" -ge 400 ]] 2>/dev/null && { echo "Error: HTTP $http_code" >&2; echo "$response" >&2; exit 1; }
-  local sc; sc="$(echo "$response" | jq -r '.base_resp.status_code // 0')" 2>/dev/null || true
-  [[ "$sc" != "0" && -n "$sc" ]] && { echo "Error: $(echo "$response" | jq '.base_resp')" >&2; exit 1; }
+  local sc; sc="$(echo "$response" | jq -r '(.base_resp.status_code // 0)')" || sc=0
+  [[ "$sc" != "0" ]] && { echo "Error: $(echo "$response" | jq '.base_resp')" >&2; exit 1; }
   echo "$response" | jq -r '.task_id // empty'
 }
 

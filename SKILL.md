@@ -147,18 +147,6 @@ python3 scripts/toolkit.py video --mode i2v --prompt "柔和的风吹过" --firs
 
 ---
 
-## 视频生成
-
-```bash
-# 文生视频（6-10 秒）
-python3 scripts/toolkit.py video --prompt "A cat on a moonlit rooftop" -o cat.mp4
-
-# 图生视频
-python3 scripts/toolkit.py video --mode i2v --prompt "柔和的风吹过" --first-frame photo.png -o anim.mp4
-```
-
----
-
 ## 飞书群管理
 
 ```bash

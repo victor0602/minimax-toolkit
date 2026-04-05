@@ -39,3 +39,31 @@ error_exit() {
   echo "$json" >&2
   exit 1
 }
+
+# Validate output path to prevent path traversal
+# Usage: validate_output_path "$output"
+validate_output_path() {
+  local output="$1"
+  if [[ -z "$output" ]]; then
+    return 0
+  fi
+  # Block path traversal
+  if [[ "$output" == *..* ]]; then
+    echo "Error: Path traversal not allowed: $output" >&2
+    return 1
+  fi
+  # Allow relative paths; for absolute paths, ensure they're inside cwd or project root
+  if [[ "$output" == /* ]]; then
+    local canonical canonical_dir
+    canonical="$(cd "$(dirname "$output")" && pwd)/$(basename "$output")"
+    canonical_dir="$(cd "$(pwd)" && pwd)"
+    if [[ "$canonical" != "$canonical_dir"/* ]]; then
+      # Not under cwd — allow only if under PROJECT_ROOT
+      if [[ "$canonical" != "$PROJECT_ROOT"/* ]]; then
+        echo "Error: Absolute path must be inside project directory: $output" >&2
+        return 1
+      fi
+    fi
+  fi
+  return 0
+}

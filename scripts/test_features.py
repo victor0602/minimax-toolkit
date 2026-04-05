@@ -21,6 +21,7 @@ PROJECT_ROOT = SCRIPT_DIR.parent
 PASS = "\033[0;32m✓\033[0m"
 FAIL = "\033[0;31m✗\033[0m"
 SKIP = "\033[0;33m⊘\033[0m"
+WARN = "\033[0;33m⚠\033[0m"
 
 
 def get_api_key():

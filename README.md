@@ -217,6 +217,27 @@ minimax-toolkit/
 
 ## 更新日志
 
+### v1.5.3 (2026-04-05)
+
+**安全：**
+- 🔧 **路径穿越防护**：新增 `validate_output_path()` 函数，`generate_video.sh` / `add_bgm.sh` / `generate_music.sh` 输出路径均做校验
+
+**修复：**
+- 🔧 **setup.sh TTY 检测 bug**：`if [[ ! is_tty ]]` → `if ! is_tty`，非交互模式检测恢复正常
+- 🔧 **test_features.py WARN 未定义**：新增 `WARN` 常量（黄色警告符号）
+- 🔧 **generate_music.sh 空 lyrics**：非纯音乐模式必须传入歌词，否则报错退出
+- 🔧 **jq || true 静默错误**：统一改为 `jq '...' || var=fallback`，错误不再被吞掉
+- 🔧 **ffmpeg 静默失败**：concat demuxer fallback 失败时正确报错退出
+- 🔧 **cmd_check_env 死链接**：指向不存在的 `check_environment.sh`，改为调用 `scripts/check.sh`
+- 🔧 **FeishuAPI 补全**：新增 `list_chats()` 方法
+- 🔧 **cmd_tts 新增 --model 参数**：传递给底层 `generate_voice.sh`
+
+**改进：**
+- ✨ **新增 --version 标志**：`python3 scripts/toolkit.py --version` 输出版本号
+- ✨ **新增 CONTRIBUTING.md**：开源贡献指南
+- 📖 **SKILL.md 去重**：删除重复的"视频生成"章节
+- 🔧 **依赖补全**：`diagnose.sh` 依赖列表新增 `bc`（用于音视频时长计算）
+
 ### v1.5.2 (2026-04-05)
 
 **重构：**

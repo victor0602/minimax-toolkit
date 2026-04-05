@@ -227,7 +227,7 @@ setup_mcporter() {
   fi
 
   warn "mcporter not found. Running installer..."
-  if [[ ! is_tty ]]; then
+  if ! is_tty; then
     warn "Interactive install requires TTY. Run interactively to install mcporter."
     return 0
   fi

@@ -98,6 +98,9 @@ USAGE
     echo "Error: --output / -o is required" >&2
     exit 1
   fi
+  if ! validate_output_path "$output"; then
+    exit 1
+  fi
 
   # Build prompt from structured fields
   local field_parts=()
@@ -146,6 +149,10 @@ USAGE
       payload=$(echo "$payload" | jq '.prompt = "pure music, no lyrics"')
     fi
   else
+    if [[ -z "$lyrics" ]]; then
+      error "Error: --lyrics is required for non-instrumental music. Use --instrumental for pure music."
+      return 1
+    fi
     payload=$(echo "$payload" | jq --arg l "$lyrics" '. + {lyrics: $l}')
   fi
 
@@ -188,8 +195,8 @@ USAGE
   fi
 
   local status_code
-  status_code="$(echo "$response" | jq -r '.base_resp.status_code // 0')" 2>/dev/null || true
-  if [[ "$status_code" != "0" && -n "$status_code" ]]; then
+  status_code="$(echo "$response" | jq -r '(.base_resp.status_code // 0)')" || status_code=0
+  if [[ "$status_code" != "0" ]]; then
     echo "API error: $(echo "$response" | jq '.base_resp')" >&2
     exit 1
   fi

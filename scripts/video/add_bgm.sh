@@ -34,6 +34,9 @@ load_env() {
   done
 }
 
+# shellcheck source=../lib/common.sh
+source "$(dirname "${BASH_SOURCE[0]}")/../lib/common.sh"
+
 get_video_duration() {
   ffprobe -v error -show_entries format=duration -of json "$1" 2>/dev/null | jq -r '.format.duration'
 }
@@ -162,6 +165,9 @@ USAGE
   fi
   if [[ -z "$output" ]]; then
     echo "Error: --output / -o is required" >&2; exit 1
+  fi
+  if ! validate_output_path "$output"; then
+    exit 1
   fi
 
   local audio_path="$audio"

@@ -64,7 +64,7 @@ _diag_echo() {
 # ---------------------------------------------------------------------------
 
 diag_check_dependencies() {
-  local deps=("jq" "curl" "ffmpeg" "python3" "base64")
+  local deps=("jq" "curl" "ffmpeg" "python3" "base64" "bc")
   local missing=()
   for dep in "${deps[@]}"; do
     if ! command -v "$dep" &>/dev/null; then
