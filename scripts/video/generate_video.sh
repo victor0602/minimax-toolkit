@@ -128,12 +128,12 @@ poll_task() {
     fi
 
     local status
-    status="$(echo "$response" | jq -r '.status // "Unknown"')"
+    status="$(echo "$response" | jq -r '.status // "Unknown"' 2>/dev/null)" || status="Unknown"
     echo "  [${elapsed}s] Status: $status" >&2
 
     if [[ "$status" == "Success" ]]; then
       local file_id
-      file_id="$(echo "$response" | jq -r '.file_id // empty')"
+      file_id="$(echo "$response" | jq -r '.file_id // empty' 2>/dev/null)" || file_id=""
       if [[ -z "$file_id" ]]; then
         echo "Error: Task succeeded but no file_id" >&2; exit 1
       fi
@@ -143,7 +143,7 @@ poll_task() {
 
     if [[ "$status" == "Fail" || "$status" == "Failed" || "$status" == "Error" ]]; then
       local err_msg
-      err_msg="$(echo "$response" | jq -r '.base_resp.status_msg // "Unknown error"')"
+      err_msg="$(echo "$response" | jq -r '.base_resp.status_msg // "Unknown error"' 2>/dev/null)" || err_msg="Unknown error"
       echo "Error: Task failed: $err_msg" >&2; exit 1
     fi
 
@@ -165,7 +165,7 @@ download_video() {
   response="${raw_output%$'\n'*}"
 
   local dl_url
-  dl_url="$(echo "$response" | jq -r '.file.download_url // empty')"
+  dl_url="$(echo "$response" | jq -r '.file.download_url // empty' 2>/dev/null)" || dl_url=""
   if [[ -z "$dl_url" ]]; then
     echo "Error: No download_url in file response" >&2; exit 1
   fi

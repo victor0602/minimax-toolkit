@@ -548,8 +548,8 @@ cmd_generate() {
 
   for ((i=0; i<count; i++)); do
     local text voice_id emotion speed vol pitch
-    text="$(echo "$segments" | jq -r ".[$i].text")"
-    voice_id="$(echo "$segments" | jq -r ".[$i].voice_id")"
+    text="$(echo "$segments" | jq -r ".[$i].text" 2>/dev/null)" || text=""
+    voice_id="$(echo "$segments" | jq -r ".[$i].voice_id" 2>/dev/null)" || voice_id=""
     emotion="$(echo "$segments" | jq -r ".[$i].emotion // \"\"")"
     speed="$(echo "$segments" | jq -r ".[$i].speed // 1.0")"
     vol="$(echo "$segments" | jq -r ".[$i].volume // 1.0")"

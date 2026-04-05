@@ -99,7 +99,7 @@ _poll_task() {
       cf=$((cf+1)); [[ $cf -ge $MAX_CONSECUTIVE_FAILURES ]] && { echo "Error: Too many failures" >&2; exit 1; }
       sleep "$POLL_INTERVAL"; continue
     fi
-    local status; status="$(echo "$response" | jq -r '.status // "Unknown"')"
+    local status; status="$(echo "$response" | jq -r '.status // "Unknown"' 2>/dev/null)" || status="Unknown"
     echo "  [${now}s] Status: $status" >&2
     [[ "$status" == "Success" ]] && { echo "$response" | jq -r '.file_id // empty'; return 0; }
     [[ "$status" == "Fail" || "$status" == "Failed" || "$status" == "Error" ]] && { echo "Error: Task failed" >&2; exit 1; }
@@ -111,7 +111,7 @@ _download_video() {
   local file_id="$1" output_path="$2"
   local raw; raw="$(curl -s -G "${API_BASE}/files/retrieve" -d "file_id=$file_id" \
     -H "Authorization: Bearer ${MINIMAX_API_KEY}" --max-time "$REQUEST_TIMEOUT")"
-  local dl_url; dl_url="$(echo "$raw" | jq -r '.file.download_url // empty')"
+  local dl_url; dl_url="$(echo "$raw" | jq -r '.file.download_url // empty' 2>/dev/null)" || dl_url=""
   [[ -z "$dl_url" ]] && { echo "Error: No download_url" >&2; exit 1; }
   mkdir -p "$(dirname "$output_path")"
   curl -s -o "$output_path" --max-time $((REQUEST_TIMEOUT * 3)) "$dl_url"
@@ -279,7 +279,7 @@ generate_music_instrumental() {
   [[ "$http_code" -ge 400 ]] 2>/dev/null && { echo "Error: Music API HTTP $http_code" >&2; return 1; }
 
   local audio_url
-  audio_url="$(echo "$response" | jq -r '.data.audio_url // .data.audio // .data.audio_file.download_url // empty')"
+  audio_url="$(echo "$response" | jq -r '.data.audio_url // .data.audio // .data.audio_file.download_url // empty' 2>/dev/null)" || audio_url=""
   [[ -z "$audio_url" ]] && { echo "Error: No audio URL in music response" >&2; return 1; }
 
   mkdir -p "$(dirname "$output_path")"
