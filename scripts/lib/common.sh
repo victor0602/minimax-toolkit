@@ -58,8 +58,9 @@ validate_output_path() {
   # Allow relative paths; for absolute paths, ensure they're inside cwd or project root
   if [[ "$output" == /* ]]; then
     local canonical canonical_dir
-    canonical="$(cd "$(dirname "$output")" && pwd)/$(basename "$output")"
-    canonical_dir="$(cd "$(pwd)" && pwd)"
+    # Use cd -P to fully resolve symlinks (macOS /etc is symlink to /private/etc)
+    canonical="$(cd -P "$(dirname "$output")" && pwd)/$(basename "$output")"
+    canonical_dir="$(cd -P "$(pwd)" && pwd)"
     if [[ "$canonical" != "$canonical_dir"/* ]]; then
       # Not under cwd — allow only if under PROJECT_ROOT
       if [[ "$canonical" != "$PROJECT_ROOT"/* ]]; then
@@ -87,9 +88,10 @@ validate_input_path() {
   # For absolute paths: only allow inside cwd or project root
   if [[ "$path" == /* ]]; then
     local canonical
-    canonical="$(cd "$(dirname "$path")" && pwd)/$(basename "$path")"
+    # Use cd -P to fully resolve symlinks (macOS /etc is symlink to /private/etc)
+    canonical="$(cd -P "$(dirname "$path")" && pwd)/$(basename "$path")"
     local cwd canonical_cwd
-    cwd="$(pwd)"; canonical_cwd="$(cd "$cwd" && pwd)"
+    cwd="$(pwd)"; canonical_cwd="$(cd -P "$cwd" && pwd)"
     if [[ "$canonical" != "$canonical_cwd"/* ]]; then
       if [[ "$canonical" != "$PROJECT_ROOT"/* ]]; then
         echo "Error: Cannot read files outside project directory: $path" >&2
