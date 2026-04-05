@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# MIT License — Copyright (c) 2026 Victor
+# https://github.com/victor0602/minimax-toolkit
+
 """
 MiniMax Toolkit — Unified CLI for all MiniMax capabilities.
 
@@ -43,7 +46,7 @@ WORKSPACE = PROJECT_ROOT  # Use toolkit root instead of hardcoded ~/.openclaw/wo
 sys.path.insert(0, str(SCRIPT_DIR))
 from lib.feishu import FeishuAPI
 
-VERSION = "1.5.3"
+VERSION = "1.5.4"
 
 # ---------------------------------------------------------------------------
 # Error handling

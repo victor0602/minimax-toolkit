@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# MIT License — Copyright (c) 2026 Victor
+# https://github.com/victor0602/minimax-toolkit
+
 """
 Feature integration tests for MiniMax Toolkit.
 Run: python3 scripts/test_features.py

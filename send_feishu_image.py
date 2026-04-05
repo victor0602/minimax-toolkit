@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# MIT License — Copyright (c) 2026 Victor
+# https://github.com/victor0602/minimax-toolkit
+
 """
 发送图片到飞书
   python3 send_feishu_image.py <file>                        # 使用 FEISHU_CHAT_ID

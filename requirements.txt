@@ -1,0 +1,4 @@
+# Python dependencies for MiniMax Toolkit
+# Install: pip3 install -r requirements.txt
+
+requests>=2.31.0

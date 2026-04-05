@@ -19,6 +19,16 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
+# Trap handler for temp directory cleanup
+_cleanup_longvideo() {
+  local marker="/tmp/minimax_longvideo_$$_tmpdir"
+  if [[ -f "$marker" ]]; then
+    local td; td="$(cat "$marker")"
+    rm -rf "$td" "$marker" 2>/dev/null || true
+  fi
+}
+trap '_cleanup_longvideo' EXIT INT TERM
+
 API_BASE="${MINIMAX_API_HOST:-https://api.minimaxi.com}/v1"
 MUSIC_API_URL="${API_BASE}/music_generation"
 POLL_INTERVAL=10
@@ -368,6 +378,7 @@ USAGE
   local tmpdir="$output_dir/tmp"
   mkdir -p "$tmpdir"
   echo "Temp directory: $tmpdir"
+  echo "$tmpdir" > "/tmp/minimax_longvideo_$$_tmpdir"
 
   local segment_paths=()
   local current_first_frame="$first_frame"

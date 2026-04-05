@@ -1,4 +1,6 @@
 #!/bin/bash
+# MIT License — Copyright (c) 2026 Victor
+# https://github.com/victor0602/minimax-toolkit
 #
 # MiniMax mcporter 自动安装脚本
 # 用法: bash scripts/install-mcporter.sh
@@ -29,7 +31,17 @@ if command -v uvx &> /dev/null || command -v uv &> /dev/null; then
     echo -e "${GREEN}✓ uvx 已安装: $UV_CMD${NC}"
 else
     echo -e "${YELLOW}! uvx 未找到，正在安装 uv...${NC}"
-    curl -LsSf https://astral.sh/uv/install.sh | sh
+    # Download to temp file first, then execute (avoid pipe-to-shell)
+    install_script=$(mktemp)
+    # Trap to clean up on exit/interrupt
+    trap "rm -f '$install_script'" EXIT INT TERM
+    curl -LsSf https://astral.sh/uv/install.sh -o "$install_script"
+    # Verify non-empty before executing
+    if [[ ! -s "$install_script" ]]; then
+      echo -e "${RED}✗ Downloaded install script is empty${NC}"
+      exit 1
+    fi
+    bash "$install_script"
     export PATH="$HOME/.local/bin:$PATH"
     if command -v uvx &> /dev/null || command -v uv &> /dev/null; then
         echo -e "${GREEN}✓ uv 安装成功${NC}"

@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# MIT License — Copyright (c) 2026 Victor
+# https://github.com/victor0602/minimax-toolkit
+#
 # Diagnostic functions for MiniMax Toolkit
 # Source this file: source "$(dirname "${BASH_SOURCE[0]}")/../lib/diagnose.sh"
 # All functions output structured JSON to stdout and human-readable to stderr.

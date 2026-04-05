@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# MIT License — Copyright (c) 2026 Victor
+# https://github.com/victor0602/minimax-toolkit
+
 """
 发送原生视频气泡到飞书（封面图 + mp4 分别上传）
   python3 send_feishu_native_video.py <video_file>

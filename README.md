@@ -217,6 +217,17 @@ minimax-toolkit/
 
 ## 更新日志
 
+### v1.5.4 (2026-04-05)
+
+**安全：**
+- 🔧 **curl|sh pipe 修复**：`install-mcporter.sh` 改为下载到临时文件再执行，避免中间人攻击
+- 🔧 **临时文件泄漏修复**：`generate_long_video.sh` 新增 `trap` 处理器，脚本退出或中断时自动清理临时目录
+- 🔧 **MIT License 头**：所有 Python/Shell 源文件新增许可证头
+
+**运维：**
+- ✨ **新增 SECURITY.md**：安全漏洞报告流程和已知安全考虑
+- ✨ **新增 requirements.txt**：Python 依赖版本锁定
+
 ### v1.5.3 (2026-04-05)
 
 **安全：**

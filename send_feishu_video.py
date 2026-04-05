@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# MIT License — Copyright (c) 2026 Victor
+# https://github.com/victor0602/minimax-toolkit
+
 """
 以文件形式发送视频（带播放器，绕过 video 权限限制）
   python3 send_feishu_video.py <video_file>

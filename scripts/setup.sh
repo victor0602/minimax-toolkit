@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# MIT License — Copyright (c) 2026 Victor
+# https://github.com/victor0602/minimax-toolkit
 #
 # MiniMax Toolkit first-run setup wizard
 # Usage: bash scripts/setup.sh [--non-interactive]

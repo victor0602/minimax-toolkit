@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# MIT License — Copyright (c) 2026 Victor
+# https://github.com/victor0602/minimax-toolkit
+
 """
 发送音频到飞书
   python3 send_feishu_audio.py <file>           # 原生语音（绿色气泡，.opus）
