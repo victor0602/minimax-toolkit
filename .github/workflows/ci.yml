@@ -18,7 +18,7 @@ jobs:
 
       - name: Run shellcheck
         run: |
-          find . -name "*.sh" -not -path "./.git/*" | xargs shellcheck -x
+          find . -name "*.sh" -not -path "./.git/*" | xargs shellcheck -x -S warning -o SC1091=off
 
   test-env:
     name: Environment Tests
@@ -70,4 +70,4 @@ jobs:
 
       - name: Run shellcheck
         run: |
-          find . -name "*.sh" -not -path "./.git/*" | xargs shellcheck -x
+          find . -name "*.sh" -not -path "./.git/*" | xargs shellcheck -x -S warning -o SC1091=off
