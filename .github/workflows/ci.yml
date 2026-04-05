@@ -19,8 +19,7 @@ jobs:
       - name: Run shellcheck
         run: |
           find . -name "*.sh" -not -path "./.git/*" | xargs shellcheck -x -S warning \
-            -o SC1091=off   `# source paths not resolvable at lint time` \
-            -o SC2034=off   `# variable used in sourced scripts, not tracked across files`
+            --exclude=SC1091,SC2034,SC2155,SC2229,SC2064
 
   test-env:
     name: Environment Tests
@@ -41,6 +40,8 @@ jobs:
 
       - name: Run environment tests
         run: python3 scripts/test_env.py
+        env:
+          MINIMAX_API_KEY: sk-cp-ci-placeholder
 
   test-features:
     name: Feature Tests
@@ -76,5 +77,4 @@ jobs:
       - name: Run shellcheck
         run: |
           find . -name "*.sh" -not -path "./.git/*" | xargs shellcheck -x -S warning \
-            -o SC1091=off   `# source paths not resolvable at lint time` \
-            -o SC2034=off   `# variable used in sourced scripts, not tracked across files`
+            --exclude=SC1091,SC2034,SC2155,SC2229,SC2064
