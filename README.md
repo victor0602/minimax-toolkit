@@ -230,6 +230,20 @@ minimax-toolkit/
 
 ## 更新日志
 
+### v1.6.0 (2026-04-10)
+
+**新模型支持：**
+- 🚀 **music-2.6**：增强版歌曲生成，`--lyrics` 必填，支持 `sample_rate`、`bitrate`、`format` 参数
+- 🚀 **music-cover**：音频翻唱/风格迁移，`--reference` 传入参考音频（base64 编码）
+- 🚀 **lyrics_generation**：独立歌词生成 API `/v1/lyrics_generation`，支持 `write_full_song` 和 `edit` 两种模式
+
+**飞书集成增强：**
+- ✨ **--feishu 标志**：所有音频自动转 .opus 格式发原生气泡，歌词直接发文本
+- 🎬 **视频第一帧预览**：`send_feishu_native_video.py` 自动截取视频首帧作为封面图，发原生视频气泡
+
+**文档：**
+- 📖 README / SKILL.md 同步更新四个模型的用法和示例
+
 ### v1.5.5 (2026-04-05)
 
 **运维：**
