@@ -22,7 +22,7 @@
 | 🎙 **TTS** | speech-2.8-hd | 语音合成，支持多种音色 |
 | 🎨 **Image** | image-01 | 文生图 / 图生图 |
 | 🎬 **Video** | Hailuo-2.3 | 文生视频 / 图生视频 / 首尾帧 |
-| 🎵 **Music** | music-2.5 / music-2.6 / music-cover / lyrics_generation | 歌曲生成 / 翻唱 / 纯歌词生成 |
+| 🎵 **Music** | music-2.5 / music-2.6 / music-cover / lyrics_generation | 歌曲生成 / 翻唱 / 纯歌词生成，--feishu 发飞书 |
 | 📨 **Feishu** | — | 图片/音频/视频气泡推送 |
 
 ---
@@ -95,6 +95,10 @@ python3 scripts/toolkit.py music --model music-cover --prompt "pop cover" --refe
 
 # 纯歌词生成（lyrics_generation）
 python3 scripts/toolkit.py music --model lyrics_generation --prompt "a cheerful summer day" -o lyrics.txt
+
+# 发送至飞书（音频转.opus原生气泡 / 歌词直接发文本）
+python3 scripts/toolkit.py music --model music-2.6 --lyrics "[verse]\nhello" --prompt "upbeat pop" --feishu
+python3 scripts/toolkit.py music --model lyrics_generation --prompt "a cheerful summer day" --feishu
 ```
 
 ### 视频生成 (Video)

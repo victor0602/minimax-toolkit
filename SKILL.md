@@ -45,7 +45,7 @@ python3 scripts/toolkit.py <command> [options]
 | `env --key <key>` | 设置 API Key |
 | `tts <text> [-v voice] [-o file]` | 语音合成 |
 | `image <prompt> [-o file]` | 图片生成 |
-| `music --prompt <style> [--model music-2.6|music-cover|lyrics_generation]` | 音乐生成 |
+| `music --prompt <style> [--model x] [--feishu]` | 音乐生成，支持 --feishu 发飞书 |
 | `video --prompt <desc> [--mode t2v] [-o file]` | 视频生成 |
 | `feishu list` | 列出机器人所在的所有群聊 |
 | `feishu send <file>` | 发送文件到选定的群聊（交互式选择） |
@@ -140,6 +140,10 @@ python3 scripts/toolkit.py music --model music-cover --prompt "pop cover" --refe
 
 # 纯歌词生成
 python3 scripts/toolkit.py music --model lyrics_generation --prompt "a cheerful summer day" -o lyrics.txt
+
+# 发送至飞书（音频转.opus原生气泡 / 歌词直接发文本）
+python3 scripts/toolkit.py music --model music-2.6 --lyrics "[verse]\nhello" --prompt "upbeat pop" --feishu
+python3 scripts/toolkit.py music --model lyrics_generation --prompt "a cheerful summer day" --feishu
 ```
 
 ---
