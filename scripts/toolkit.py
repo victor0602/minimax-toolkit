@@ -46,7 +46,7 @@ WORKSPACE = PROJECT_ROOT  # Use toolkit root instead of hardcoded ~/.openclaw/wo
 sys.path.insert(0, str(SCRIPT_DIR))
 from lib.feishu import FeishuAPI
 
-VERSION = "1.5.6"
+VERSION = "1.6.0"
 
 # ---------------------------------------------------------------------------
 # Error handling
@@ -486,6 +486,62 @@ def cmd_image(args):
     sys.exit(0)
 
 
+def _music_send_feishu(output_path, model, feishu_api, chat_id):
+    """Convert audio to .opus and send via Feishu native bubble, or send lyrics text."""
+    import tempfile
+    import urllib.request
+    import urllib.parse
+
+    if model == "lyrics_generation":
+        # Send lyrics as text
+        with open(output_path, "r", encoding="utf-8") as f:
+            lyrics_text = f.read()
+        result = feishu_api.send_text(chat_id, lyrics_text)
+        if result:
+            print(f"[Feishu] Lyrics sent ({len(lyrics_text)} chars)")
+        else:
+            print("[Feishu] Failed to send lyrics", file=sys.stderr)
+        return
+
+    # Audio: convert to .opus and send as native audio bubble
+    if not shutil.which("ffmpeg"):
+        print("[Feishu] ffmpeg not found, skipping audio send", file=sys.stderr)
+        return
+
+    tmp_opus = tempfile.NamedTemporaryFile(suffix=".opus", delete=False)
+    tmp_opus.close()
+
+    try:
+        # Convert to opus using ffmpeg
+        conv = subprocess.run(
+            [
+                "ffmpeg", "-y",
+                "-i", output_path,
+                "-c:a", "libopus",
+                "-b:a", "128k",
+                tmp_opus.name,
+            ],
+            capture_output=True, text=True, timeout=120,
+        )
+        if conv.returncode != 0:
+            print(f"[Feishu] ffmpeg failed: {conv.stderr[-300:]}", file=sys.stderr)
+            return
+
+        # Upload and send
+        file_key = feishu_api.upload_file(tmp_opus.name, "opus")
+        if not file_key:
+            print("[Feishu] File upload failed", file=sys.stderr)
+            return
+
+        result = feishu_api.send_audio(chat_id, file_key)
+        if result:
+            print(f"[Feishu] Audio sent ({tmp_opus.name})")
+        else:
+            print("[Feishu] Send failed", file=sys.stderr)
+    finally:
+        os.unlink(tmp_opus.name)
+
+
 def cmd_music(args):
     require_api_key()
     output = args.output or str(PROJECT_ROOT / "minimax-output" / "music.mp3")
@@ -500,6 +556,10 @@ def cmd_music(args):
         cmd.extend(["--lyrics", args.lyrics])
     if args.instrumental:
         cmd.append("--instrumental")
+    if args.model:
+        cmd.extend(["--model", args.model])
+    if args.reference:
+        cmd.extend(["--reference", args.reference])
 
     result = subprocess.run(
         cmd,
@@ -508,12 +568,36 @@ def cmd_music(args):
         capture_output=True,
         text=True,
     )
+    # stdout: clean output (path lines), stderr: status messages
     if result.stdout:
         print(result.stdout)
     if result.stderr:
         print(result.stderr, file=sys.stderr)
     if result.returncode != 0:
         error_exit("E_MUSIC_FAILED", "Music generation failed")
+
+    # Extract OUTPUT_PATH from stdout
+    output_path = None
+    for line in result.stdout.strip().splitlines():
+        if line.startswith("OUTPUT_PATH:"):
+            output_path = line.split(":", 1)[1].strip()
+            break
+
+    if not output_path or not os.path.exists(output_path):
+        print(f"[Warning] Output file not found: {output_path}", file=sys.stderr)
+        sys.exit(0)
+
+    # Feishu delivery
+    if args.feishu:
+        feishu_api = FeishuAPI()
+        chat_id = os.environ.get("FEISHU_CHAT_ID", "")
+        if not chat_id:
+            print("[Feishu] FEISHU_CHAT_ID not set, skipping send", file=sys.stderr)
+            sys.exit(0)
+        if not feishu_api.check_config():
+            sys.exit(1)
+        _music_send_feishu(output_path, args.model, feishu_api, chat_id)
+
     sys.exit(0)
 
 
@@ -699,7 +783,10 @@ def build_parser():
     p_music.add_argument("--prompt", required=True, help="Music style/prompt")
     p_music.add_argument("--lyrics", help="Song lyrics")
     p_music.add_argument("--instrumental", action="store_true", help="Instrumental only")
+    p_music.add_argument("--model", default="music-2.5", help="Model name (music-2.5, music-2.6, music-cover, lyrics_generation)")
+    p_music.add_argument("--reference", help="Reference audio path (for music-cover)")
     p_music.add_argument("-o", "--output", help="Output file path")
+    p_music.add_argument("--feishu", action="store_true", help="Send result via Feishu native bubble (audio or text)")
 
     # video
     p_video = sub.add_parser("video", help="Generate video")

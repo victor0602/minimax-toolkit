@@ -45,7 +45,7 @@ python3 scripts/toolkit.py <command> [options]
 | `env --key <key>` | 设置 API Key |
 | `tts <text> [-v voice] [-o file]` | 语音合成 |
 | `image <prompt> [-o file]` | 图片生成 |
-| `music --prompt <style> [--lyrics "歌词"]` | 音乐生成 |
+| `music --prompt <style> [--model music-2.6|music-cover|lyrics_generation]` | 音乐生成 |
 | `video --prompt <desc> [--mode t2v] [-o file]` | 视频生成 |
 | `feishu list` | 列出机器人所在的所有群聊 |
 | `feishu send <file>` | 发送文件到选定的群聊（交互式选择） |
@@ -126,11 +126,20 @@ python3 scripts/toolkit.py image "山水风景" --aspect-ratio 16:9 -o landscape
 ## 音乐生成
 
 ```bash
+# 带歌词（默认 music-2.5）
+python3 scripts/toolkit.py music --prompt "轻快流行音乐" --lyrics "[verse]\nHello world" -o song.mp3
+
+# music-2.6 增强版（lyrics 必填）
+python3 scripts/toolkit.py music --model music-2.6 --lyrics "[verse]\nstars" -o song26.mp3
+
 # 纯音乐
 python3 scripts/toolkit.py music --prompt "ambient electronic, atmospheric" --instrumental -o ambient.mp3
 
-# 带歌词
-python3 scripts/toolkit.py music --prompt "轻快流行音乐" --lyrics "[verse]\nHello world" -o song.mp3
+# 翻唱 / 风格迁移
+python3 scripts/toolkit.py music --model music-cover --prompt "pop cover" --reference input.mp3 -o cover.mp3
+
+# 纯歌词生成
+python3 scripts/toolkit.py music --model lyrics_generation --prompt "a cheerful summer day" -o lyrics.txt
 ```
 
 ---

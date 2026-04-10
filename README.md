@@ -22,7 +22,7 @@
 | 🎙 **TTS** | speech-2.8-hd | 语音合成，支持多种音色 |
 | 🎨 **Image** | image-01 | 文生图 / 图生图 |
 | 🎬 **Video** | Hailuo-2.3 | 文生视频 / 图生视频 / 首尾帧 |
-| 🎵 **Music** | music-2.5 | 歌词+旋律 或 纯音乐 |
+| 🎵 **Music** | music-2.5 / music-2.6 / music-cover / lyrics_generation | 歌曲生成 / 翻唱 / 纯歌词生成 |
 | 📨 **Feishu** | — | 图片/音频/视频气泡推送 |
 
 ---
@@ -81,11 +81,20 @@ python3 scripts/toolkit.py image "一只橘色的猫" -o cat.png --download
 ### 音乐生成 (Music)
 
 ```bash
+# 带歌词（默认 music-2.5）
+python3 scripts/toolkit.py music --prompt "upbeat pop" --lyrics "[verse]\nhello world" -o song.mp3
+
+# music-2.6 增强版（lyrics 必填）
+python3 scripts/toolkit.py music --model music-2.6 --lyrics "[verse]\nstars" -o song26.mp3
+
 # 纯音乐
 python3 scripts/toolkit.py music --prompt "ambient electronic" --instrumental -o ambient.mp3
 
-# 带歌词
-python3 scripts/toolkit.py music --prompt "upbeat pop" --lyrics "hello world" -o song.mp3
+# 翻唱 / 风格迁移（music-cover）
+python3 scripts/toolkit.py music --model music-cover --prompt "pop cover" --reference input.mp3 -o cover.mp3
+
+# 纯歌词生成（lyrics_generation）
+python3 scripts/toolkit.py music --model lyrics_generation --prompt "a cheerful summer day" -o lyrics.txt
 ```
 
 ### 视频生成 (Video)
